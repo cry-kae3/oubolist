@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>抽選応募エージェント | Nintendo Switch 2</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+      background: linear-gradient(135deg, #fafafa 0%, #f0f2f5 100%);
+      color: #333;
+      line-height: 1.5;
+      padding: 20px 2px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="0.5" fill="rgba(74,85,104,0.03)"/><circle cx="80" cy="20" r="0.3" fill="rgba(74,85,104,0.03)"/><circle cx="50" cy="50" r="0.4" fill="rgba(74,85,104,0.03)"/><circle cx="30" cy="80" r="0.3" fill="rgba(74,85,104,0.03)"/><circle cx="70" cy="70" r="0.5" fill="rgba(74,85,104,0.03)"/></svg>');
+      animation: float 30s infinite linear;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0% { transform: translateX(-50px) translateY(-50px); }
+      100% { transform: translateX(50px) translateY(50px); }
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+      color: white;
+      padding: 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      opacity: 0.95;
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .update-note {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      background: rgba(255,255,255,0.15);
+      padding: 8px 16px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .search-section {
+      padding: 16px 24px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-input {
+      padding: 8px 16px;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      width: 300px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #495057;
+      box-shadow: 0 0 0 2px rgba(73, 80, 87, 0.1);
+    }
+
+    .filter-section {
+      padding: 16px 24px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .filter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border: 1px solid #dee2e6;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      color: #495057;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .filter-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(73, 80, 87, 0.1), transparent);
+      transition: left 0.4s;
+    }
+
+    .filter-btn:hover::before {
+      left: 100%;
+    }
+
+    .filter-btn.active {
+      background: #495057;
+      color: white;
+      border-color: #495057;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(73, 80, 87, 0.2);
+    }
+
+    .filter-btn:hover {
+      background: #e9ecef;
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.active:hover {
+      background: #495057;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      padding: 0;
+      position: relative;
+    }
+
+    .scroll-indicator-top,
+    .scroll-indicator-bottom {
+      display: none;
+      height: 8px;
+      background: linear-gradient(90deg, #dee2e6, #6c757d, #dee2e6);
+      border-radius: 4px;
+      margin: 0 10px;
+      opacity: 0.7;
+    }
+
+    .scroll-indicator-top {
+      margin-bottom: 5px;
+    }
+
+    .scroll-indicator-bottom {
+      margin-top: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      border-spacing: 0;
+    }
+
+    th {
+      background: #f8f9fa;
+      color: #495057;
+      padding: 16px 10px;
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 2px solid #dee2e6;
+      white-space: nowrap;
+      vertical-align: middle;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    th:hover {
+      background: #e9ecef;
+    }
+
+    th.sortable::after {
+      content: ' ⇅';
+      color: #6c757d;
+      font-size: 0.8em;
+      margin-left: 4px;
+    }
+
+    th.sort-asc::after {
+      content: ' ↑';
+      color: #495057;
+      font-weight: bold;
+    }
+
+    th.sort-desc::after {
+      content: ' ↓';
+      color: #495057;
+      font-weight: bold;
+    }
+
+    th::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #495057;
+      transition: width 0.3s ease;
+    }
+
+    th:hover::before {
+      width: 100%;
+    }
+
+    td {
+      padding: 12px 10px !important;
+      border-bottom: 1px solid #f1f3f4;
+      vertical-align: middle;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    td:nth-child(3),
+    td:nth-child(4) {
+      white-space: nowrap;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+      transform: scale(1.001);
+    }
+
+    .urgent {
+      background: linear-gradient(90deg, #fff5f5, #ffffff);
+      border-left: 3px solid #dc3545;
+      animation: urgentPulse 2s infinite;
+    }
+
+    @keyframes urgentPulse {
+      0%, 100% { border-left-color: #dc3545; }
+      50% { border-left-color: #ff6b7a; }
+    }
+
+    .today-ending {
+      background: linear-gradient(90deg, #fff3cd, #ffffff);
+      border-left: 3px solid #ffc107;
+    }
+
+    .very-urgent {
+      background: linear-gradient(90deg, #ffe6e6, #ffffff);
+      border-left: 3px solid #ff0000;
+      animation: veryUrgentPulse 1s infinite;
+    }
+
+    @keyframes veryUrgentPulse {
+      0%, 100% { 
+        border-left-color: #ff0000;
+        box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.1);
+      }
+      50% { 
+        border-left-color: #ff4444;
+        box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.2);
+      }
+    }
+
+    .store-name {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 14px;
+    }
+
+    .store-type {
+      font-size: 11px;
+      color: #6c757d;
+      margin-top: 2px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      text-align: center;
+      min-width: 65px;
+    }
+
+    .status-active {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      animation: glow 2s infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(21, 87, 36, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(21, 87, 36, 0.6); }
+    }
+
+    .status-upcoming {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    .status-ended {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f1b0b7;
+    }
+
+    .status-ongoing {
+      background: #cce5ff;
+      color: #0056b3;
+      border: 1px solid #99d3ff;
+    }
+
+    .status-waiting {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    .status-purchase {
+      background: #e1f5fe;
+      color: #01579b;
+      border: 1px solid #b3e5fc;
+    }
+
+    .model {
+      background: #e9ecef;
+      color: #495057;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: inline-block;
+      margin: 1px;
+      transition: all 0.2s ease;
+    }
+
+    .model:hover {
+      background: #dee2e6;
+      transform: scale(1.05);
+    }
+
+    .period {
+      font-weight: 500;
+      color: #495057;
+      font-size: 12px;
+    }
+
+    .condition {
+      font-size: 12px;
+      color: #6c757d;
+      line-height: 1.4;
+    }
+
+    .result, .deadline {
+      font-size: 12px;
+      color: #495057;
+    }
+
+    .link-btn {
+      background: #495057;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .link-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.4s;
+    }
+
+    .link-btn:hover::before {
+      left: 100%;
+    }
+
+    .link-btn:hover {
+      background: #343a40;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 58, 64, 0.3);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      font-size: 14px;
+    }
+
+    .stat-item {
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-number {
+      font-size: 18px;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .section-header {
+      background: #e9ecef;
+      padding: 8px 16px;
+      font-weight: 600;
+      color: #495057;
+      font-size: 13px;
+      border-top: 2px solid #dee2e6;
+    }
+
+    .section-header td {
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .countdown {
+      font-size: 10px;
+      color: #dc3545;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .countdown.very-urgent {
+      color: #ff0000;
+      animation: countdownBlink 1s infinite;
+    }
+
+    @keyframes countdownBlink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.5; }
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: #6c757d;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 1200px) {
+      .condition {
+        font-size: 10px;
+      }
+      
+      .search-input {
+        width: 250px;
+      }
+
+      .filter-controls {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 0 2px;
+      }
+      
+      .header {
+        padding: 16px;
+      }
+      
+      h1 {
+        font-size: 1.4rem;
+      }
+      
+      th, td {
+        padding: 8px 6px;
+        font-size: 11px;
+      }
+      
+      .filter-section, .search-section {
+        padding: 12px 16px;
+      }
+      
+      .search-input {
+        width: 200px;
+        font-size: 0.85rem;
+      }
+      
+      .stats {
+        gap: 20px;
+        padding: 12px;
+      }
+      
+      .condition {
+        font-size: 9px;
+      }
+
+      .scroll-indicator-top,
+      .scroll-indicator-bottom {
+        display: block;
+        animation: scrollHint 2s infinite ease-in-out;
+      }
+
+      .filter-controls {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    @keyframes scrollHint {
+      0%, 100% { opacity: 0.4; transform: scaleX(1); }
+      50% { opacity: 0.8; transform: scaleX(1.1); }
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>抽選応募エージェント | Nintendo Switch 2 完全攻略</h1>
+      <div class="subtitle">全国の抽選情報を網羅・分析する専門エージェント | 2025年6月9日現在</div>
+      <div class="update-note">🎮 抽選応募エージェント | 📅 リアルタイム更新 | 🔄 全国版・地域限定版完全対応 | ✅ 6/9調査完了 | ⚠️ 本日締切多数 | 🔄 カラムソート対応</div>
+    </div>
+
+    <div class="search-section">
+      <div class="search-box">
+        <input type="text" class="search-input" placeholder="店舗名で検索..." id="searchInput">
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-controls">
+        <div class="filter-buttons">
+          <button class="filter-btn active" onclick="filterRows('all')">すべて表示</button>
+          <button class="filter-btn" onclick="filterRows('active')">受付中</button>
+          <button class="filter-btn" onclick="filterRows('upcoming')">開始予定</button>
+          <button class="filter-btn" onclick="filterRows('ongoing')">実施中</button>
+          <button class="filter-btn" onclick="filterRows('waiting')">発表待ち</button>
+          <button class="filter-btn" onclick="filterRows('purchase')">購入期間中</button>
+          <button class="filter-btn" onclick="filterRows('ended')">終了済み</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="scroll-indicator-top"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>店舗名</th>
+            <th>ステータス</th>
+            <th>応募</th>
+            <th class="sortable" onclick="sortByColumn('deadline')" data-sort="deadline">受付期間</th>
+            <th>応募条件</th>
+            <th class="sortable" onclick="sortByColumn('result')" data-sort="result">結果発表</th>
+            <th class="sortable" onclick="sortByColumn('purchase')" data-sort="purchase">購入期限</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- データは JavaScript で動的に生成 -->
+        </tbody>
+      </table>
+      <div class="scroll-indicator-bottom"></div>
+      <div id="noResults" class="no-results hidden">
+        検索条件に一致する店舗が見つかりませんでした。
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number" id="stat-active">6</div>
+        <div class="stat-label">受付中</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-upcoming">1</div>
+        <div class="stat-label">開始予定</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-ongoing">2</div>
+        <div class="stat-label">実施中</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-waiting">4</div>
+        <div class="stat-label">発表待ち</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-purchase">6</div>
+        <div class="stat-label">購入期間中</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-ended">0</div>
+        <div class="stat-label">終了済み</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // 動的ステータス計算関数
+    function calculateStatus(item) {
+      const now = new Date();
+      
+      // 応募期間中かチェック
+      if (item.startDate && item.endDate) {
+        if (now >= item.startDate && now <= item.endDate) {
+          return 'active';
+        }
+        if (now < item.startDate) {
+          return 'upcoming';
+        }
+      }
+      
+      // 結果発表待ちかチェック
+      if (item.endDate && item.resultDate) {
+        if (now > item.endDate && now < item.resultDate) {
+          return 'waiting';
+        }
+      }
+      
+      // 購入期間中かチェック
+      if (item.resultDate && item.purchaseDate) {
+        if (now >= item.resultDate && now <= item.purchaseDate) {
+          return 'purchase';
+        }
+      }
+      
+      // 招待制・実施中の場合
+      if (item.isOngoing) {
+        return 'ongoing';
+      }
+      
+      // 期限切れかチェック
+      if (item.purchaseDate && now > item.purchaseDate) {
+        return 'ended';
+      }
+      if (item.endDate && now > item.endDate && !item.resultDate) {
+        return 'ended';
+      }
+      
+      return 'ended';
+    }
+
+    // データ定義
+    const storeData = [
+      // 全国版
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'マイニンテンドーストア',
+        storeType: '任天堂公式 第4回',
+        link: 'https://store-jp.nintendo.com/',
+        period: '6/3 12:15〜6/11 11:00',
+        startDate: new Date('2025-06-03T12:15:00'),
+        endDate: new Date('2025-06-11T11:00:00'),
+        condition: '第3回落選者は自動引継ぎ。Nintendo Switchソフト50時間以上プレイ(2/28時点)＋Nintendo Switch Online累積1年以上加入＋現在も加入中',
+        result: '6/17（火）午後以降',
+        resultDate: new Date('2025-06-17T15:00:00'),
+        deadline: '〜7/4（金）まで',
+        purchaseDate: new Date('2025-07-04T23:59:00'),
+        countdownId: 'countdown-1'
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'セブンネット',
+        storeType: 'コンビニ系EC 第2回',
+        link: 'https://7net.omni7.jp/general/027003/250530switch2',
+        period: '5/30 15:00〜6/11 15:00',
+        startDate: new Date('2025-05-30T15:00:00'),
+        endDate: new Date('2025-06-11T15:00:00'),
+        condition: '2024/5/30〜2025/6/11期間中に税抜1,000円以上購入履歴(電子書籍除く)＋2025/6/15までに商品受取完了＋メルマガ受信設定',
+        result: '6/20（木）19:00まで',
+        resultDate: new Date('2025-06-20T19:00:00'),
+        deadline: '7月上旬より順次お届け',
+        purchaseDate: new Date('2025-07-10T23:59:00'),
+        countdownId: 'countdown-2'
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'ヨドバシカメラ',
+        storeType: '家電量販店 第2回 本日締切',
+        link: 'https://www.yodobashi.com/',
+        period: '6/6 11:00〜6/9 10:59',
+        startDate: new Date('2025-06-06T11:00:00'),
+        endDate: new Date('2025-06-09T10:59:00'),
+        condition: '2024/5/1〜2025/4/30期間中にヨドバシ・ドット・コムまたは店舗で累計50,000円以上購入履歴。ゴールド・ポイントカード・プラスのクレジット決済で当選率優遇',
+        result: '6/10（月）10:00予定',
+        resultDate: new Date('2025-06-10T10:00:00'),
+        deadline: '6/13（金）23:59まで',
+        purchaseDate: new Date('2025-06-13T23:59:00'),
+        countdownId: 'countdown-3'
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: '楽天ブックス',
+        storeType: 'EC大手 第3回 本日締切',
+        link: 'https://books.rakuten.co.jp/',
+        period: '6/4 12:00〜6/9 11:59',
+        startDate: new Date('2025-06-04T12:00:00'),
+        endDate: new Date('2025-06-09T11:59:00'),
+        condition: '楽天会員＋2024/6/3〜2025/6/3期間の楽天ブックス購入・発送履歴(楽天Kobo・ダウンロード商品除く)。過去Nintendo Switch 2当選者は対象外。1商品1回・1世帯1名限り',
+        result: '6/20（木）頃',
+        resultDate: new Date('2025-06-20T12:00:00'),
+        deadline: '当選通知後案内',
+        purchaseDate: null,
+        countdownId: 'countdown-7'
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'ゲオ',
+        storeType: 'エンタメ店 第2回 本日締切',
+        link: 'https://geo-online.co.jp/',
+        period: '5/28 11:00〜6/9 17:59',
+        startDate: new Date('2025-05-28T11:00:00'),
+        endDate: new Date('2025-06-09T17:59:00'),
+        condition: 'ゲオアプリと抽選店舗レンタル会員機能を追加したPontaカードの連携が必要。前回落選者を優先',
+        result: '6/13（金）発表',
+        resultDate: new Date('2025-06-13T12:00:00'),
+        deadline: '6/14〜4日間以内',
+        purchaseDate: new Date('2025-06-17T23:59:00'),
+        countdownId: 'countdown-5'
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'トイザらス',
+        storeType: '玩具専門店 第3回 本日締切',
+        link: 'https://www.toysrus.co.jp/',
+        period: '店舗により異なる〜6/9',
+        startDate: new Date('2025-05-20T10:00:00'),
+        endDate: new Date('2025-06-09T23:59:00'),
+        condition: '2024/11/23〜2025/5/22期間に税込3,000円以上購入実績＋スターカードにお客様情報登録＋受取時顔写真付き公的身分証明書提示。店頭QRコードでのみ応募可能',
+        result: '6/20（木）頃',
+        resultDate: new Date('2025-06-20T12:00:00'),
+        deadline: '当選通知後案内',
+        purchaseDate: null,
+        countdownId: 'countdown-6'
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'Amazon',
+        storeType: 'EC大手 招待制',
+        link: 'https://www.amazon.co.jp/',
+        period: '4/24〜（招待制継続）',
+        startDate: new Date('2025-04-24T10:00:00'),
+        endDate: null,
+        isOngoing: true,
+        condition: 'Amazonアカウント。招待リクエスト有効期間3ヶ月。招待キャンセル後は同商品再注文不可',
+        result: '随時招待メール通知（6/3にも送信実績）',
+        resultDate: null,
+        deadline: '招待メール受信後72時間以内',
+        purchaseDate: null
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'ノジマ',
+        storeType: '関東・東海地方 招待制',
+        link: 'https://www.nojima.co.jp/',
+        period: '4/24〜（招待制継続）',
+        startDate: new Date('2025-04-24T10:00:00'),
+        endDate: null,
+        isOngoing: true,
+        condition: 'ノジマアプリに「専用の申し込みフォーム」が表示されたお客様のみ対象。招待制販売およびシークレット販売',
+        result: '随時招待・抽選実施',
+        resultDate: null,
+        deadline: '通知後案内',
+        purchaseDate: null
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'XPRICE本店',
+        storeType: '家電EC',
+        link: 'https://xprice.co.jp/',
+        period: '6/10 12:00〜6/16 23:59',
+        startDate: new Date('2025-06-10T12:00:00'),
+        endDate: new Date('2025-06-16T23:59:00'),
+        condition: 'XPRICE会員登録＋2024/6/1〜2025/6/16期間中に1回以上の注文履歴（購入金額制限なし、キャンセル・返品除く）',
+        result: '6/25（水）12:00以降順次',
+        resultDate: new Date('2025-06-25T12:00:00'),
+        deadline: '6/28〜6/30購入期間',
+        purchaseDate: new Date('2025-06-30T23:59:00')
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'AT FIELD',
+        storeType: 'アニメグッズ専門店 第3回',
+        link: 'https://at-field.net/',
+        period: '6/6 12:00〜6/8 23:59',
+        startDate: new Date('2025-06-06T12:00:00'),
+        endDate: new Date('2025-06-08T23:59:00'),
+        condition: '第1回・第2回当選者は無効。複数申し込みは全て無効。転売目的と判断された場合も無効',
+        result: '6/10（月）11:00発表',
+        resultDate: new Date('2025-06-10T11:00:00'),
+        deadline: '6/12〜支払確認後案内',
+        purchaseDate: new Date('2025-06-15T23:59:00')
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'ヤマダデンキ',
+        storeType: '家電量販店 第2回',
+        link: 'https://www.yamada-denki.jp/',
+        period: '5/29 22:00〜6/1 23:59',
+        startDate: new Date('2025-05-29T22:00:00'),
+        endDate: new Date('2025-06-01T23:59:00'),
+        condition: '2025年4月末日までにヤマダデジタル会員アプリ本登録完了＋2024/5/1〜2025/6/1期間内の店舗またはウェブコム購入実績＋抽選登録時指定店舗受取了承',
+        result: '第1回：6/13（金）18:00〜6/15（日）<br>第2回：6/20（金）18:00〜6/22（日）<br>第3回：6/27（金）18:00〜6/29（日）',
+        resultDate: new Date('2025-06-13T18:00:00'),
+        deadline: '6/13〜7/25（3回チャンス制）',
+        purchaseDate: new Date('2025-07-25T23:59:00')
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'イオン',
+        storeType: '総合小売 第2回',
+        link: 'https://www.aeon.com/',
+        period: '第2回受付終了',
+        startDate: new Date('2025-05-15T10:00:00'),
+        endDate: new Date('2025-06-05T23:59:00'),
+        condition: 'イオンスタイルオンラインで応募。イオンクレジットカードでの決済必須',
+        result: '6/11（水）12:00以降予定',
+        resultDate: new Date('2025-06-11T12:00:00'),
+        deadline: '当選通知後案内',
+        purchaseDate: new Date('2025-06-20T23:59:00')
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'ファミマオンライン',
+        storeType: 'コンビニ系EC 第2回',
+        link: 'https://www.family.co.jp/',
+        period: '6/3 10:00〜6/5 23:59',
+        startDate: new Date('2025-06-03T10:00:00'),
+        endDate: new Date('2025-06-05T23:59:00'),
+        condition: '2025年6月2日時点でファミマアプリ「ファミペイ」会員であること',
+        result: '6/11（水）',
+        resultDate: new Date('2025-06-11T12:00:00'),
+        deadline: '6/19（木）10:00〜受取開始',
+        purchaseDate: new Date('2025-06-19T10:00:00')
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'MrMax',
+        storeType: 'ディスカウントストア',
+        link: 'https://www.mrmax.co.jp/',
+        period: '6/5〜6/8 23:59',
+        startDate: new Date('2025-05-20T10:00:00'),
+        endDate: new Date('2025-06-08T23:59:00'),
+        condition: '2024/3/1〜2025/4/13期間にアプリ会員証をレジ提示して買い物またはオンラインストア購入。PUSH通知受取設定「許可」。当選者本人が店頭で引き取り',
+        result: '6/4（水）12:00頃発表済み',
+        resultDate: new Date('2025-06-04T12:00:00'),
+        deadline: '6/5〜6/22（日）',
+        purchaseDate: new Date('2025-06-22T23:59:00')
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'TSUTAYA',
+        storeType: 'エンタメ店',
+        link: 'https://tsutaya.tsite.jp/',
+        period: '5/16 10:00〜5/22 23:59',
+        startDate: new Date('2025-05-16T10:00:00'),
+        endDate: new Date('2025-05-22T23:59:00'),
+        condition: 'TSUTAYAアプリへのログインとモバイルVカードの利用登録が必要。お一人様いずれか1種を1回のみ応募可能。第1回当選者は対象外',
+        result: '6/6〜6/7 17:00発表済み',
+        resultDate: new Date('2025-06-06T17:00:00'),
+        deadline: '6/14（土）開店〜6/15（日）閉店',
+        purchaseDate: new Date('2025-06-15T20:00:00')
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'ジョーシン',
+        storeType: '家電量販店 第3回ウェブ抽選',
+        link: 'https://joshin.co.jp/',
+        period: '6/3 11:00〜6/6 10:59（受付終了）',
+        startDate: new Date('2025-06-03T11:00:00'),
+        endDate: new Date('2025-06-06T10:59:00'),
+        condition: 'ジョーシンwebメンバーズ会員＋過去1年間にジョーシンでの購入実績',
+        result: '6/6（木）発表済み',
+        resultDate: new Date('2025-06-06T12:00:00'),
+        deadline: '6/14（金）より販売開始',
+        purchaseDate: new Date('2025-06-20T23:59:00')
+      },
+      {
+        section: '🌏 全国版 抽選販売',
+        store: 'ビックカメラ',
+        storeType: '家電量販店 第3回店舗抽選',
+        link: 'https://www.biccamera.com/',
+        period: '第3回店舗抽選（受付終了）',
+        startDate: new Date('2025-05-20T10:00:00'),
+        endDate: new Date('2025-06-05T23:59:00'),
+        condition: '公式アプリ登録＋ポイントカード登録＋2023/4/1〜2025/3/31に合計5,000円以上購入履歴（条件緩和）',
+        result: '6/13（木）より順次発表',
+        resultDate: new Date('2025-06-13T12:00:00'),
+        deadline: '当選通知後案内',
+        purchaseDate: new Date('2025-06-25T23:59:00')
+      },
+      // 地域限定版
+      {
+        section: '📍 地域限定 抽選販売',
+        store: '平和堂',
+        storeType: '近畿・北陸・東海',
+        link: 'https://www.heiwado.jp/',
+        period: '5/8午前〜5/11 23:59（受付終了）',
+        startDate: new Date('2025-05-08T09:00:00'),
+        endDate: new Date('2025-05-11T23:59:00'),
+        condition: '2025/1/1〜2025/3/31期間中にHOPカードまたはHOPアプリ会員証を提示して買い物履歴＋2025/5/4時点でHOPアプリ会員登録済み',
+        result: '5/29発表済み',
+        resultDate: new Date('2025-05-29T12:00:00'),
+        deadline: '6/5〜6/8完了予定',
+        purchaseDate: new Date('2025-06-08T20:00:00')
+      },
+      {
+        section: '📍 地域限定 抽選販売',
+        store: '三洋堂書店',
+        storeType: '書店チェーン（岐阜県等）第1回',
+        link: 'https://www.sanyodo.ne.jp/',
+        period: '第1回：4/24〜5/18（受付終了）',
+        startDate: new Date('2025-04-24T10:00:00'),
+        endDate: new Date('2025-05-18T23:59:00'),
+        condition: '三洋堂サイト会員＋2025年6月1日までの1年間にカードバーコードスキャンでの購入・レンタル実績。1人1回・1店舗限り',
+        result: '5/26発表済み',
+        resultDate: new Date('2025-05-26T12:00:00'),
+        deadline: '6/5〜6/8有人営業時間中',
+        purchaseDate: new Date('2025-06-08T18:00:00')
+      },
+      {
+        section: '📍 地域限定 抽選販売',
+        store: 'WonderGOO',
+        storeType: '東海地方エンタメ店 第1回',
+        link: 'https://www.wondergoo.com/',
+        period: '第1回：4/24 10:00〜5/6 17:00（受付終了）',
+        startDate: new Date('2025-04-24T10:00:00'),
+        endDate: new Date('2025-05-06T17:00:00'),
+        condition: '応募期間内公開の応募フォームより応募。1世帯全店で対象商品1点・1回限り',
+        result: '5/24発表済み',
+        resultDate: new Date('2025-05-24T12:00:00'),
+        deadline: '6/5〜6/8完了予定',
+        purchaseDate: new Date('2025-06-08T20:00:00')
+      },
+      {
+        section: '📍 地域限定 抽選販売',
+        store: '三洋堂書店',
+        storeType: '書店チェーン（岐阜県等）第2回',
+        link: 'https://www.sanyodo.ne.jp/',
+        period: '第2回：5/27〜6/1（受付終了）',
+        startDate: new Date('2025-05-27T10:00:00'),
+        endDate: new Date('2025-06-01T23:59:00'),
+        condition: '三洋堂サイト会員＋2025年6月1日までの1年間にカードバーコードスキャンでの購入・レンタル実績。1人1回・1店舗限り',
+        result: '6/11（水）当選者のみメール',
+        resultDate: new Date('2025-06-11T12:00:00'),
+        deadline: '6/14（土）〜6/15（日）有人営業時間中',
+        purchaseDate: new Date('2025-06-15T18:00:00')
+      },
+      {
+        section: '📍 地域限定 抽選販売',
+        store: 'WonderGOO',
+        storeType: '東海地方エンタメ店 第2回',
+        link: 'https://www.wondergoo.com/',
+        period: '第2回：5/27 10:00〜6/1 17:00（受付終了）',
+        startDate: new Date('2025-05-27T10:00:00'),
+        endDate: new Date('2025-06-01T17:00:00'),
+        condition: '応募期間内公開の応募フォームより応募。1世帯全店で対象商品1点・1回限り',
+        result: '6/12（木）までにメール・電話通知（当選者のみ）',
+        resultDate: new Date('2025-06-12T12:00:00'),
+        deadline: '6/14（土）〜6/16（月）',
+        purchaseDate: new Date('2025-06-16T20:00:00')
+      }
+    ];
+
+    let currentSortMode = 'priority';
+    let currentSortDirection = 'asc';
+    let currentFilter = 'all';
+
+    // 検索機能
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('tableBody');
+    const noResults = document.getElementById('noResults');
+
+    searchInput.addEventListener('input', function() {
+      applyFiltersAndSort();
+    });
+
+    // フィルター機能
+    function filterRows(status) {
+      currentFilter = status;
+      const buttons = document.querySelectorAll('.filter-btn');
+      
+      // ボタンのアクティブ状態を更新
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      applyFiltersAndSort();
+    }
+
+    // カラムソート機能
+    function sortByColumn(column) {
+      // 現在のソートカラムと同じ場合は方向を切り替え
+      if (currentSortMode === column) {
+        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSortMode = column;
+        currentSortDirection = 'asc';
+      }
+      
+      updateSortHeaders();
+      applyFiltersAndSort();
+    }
+
+    // ソートヘッダーの更新
+    function updateSortHeaders() {
+      const headers = document.querySelectorAll('th.sortable');
+      headers.forEach(header => {
+        header.classList.remove('sort-asc', 'sort-desc');
+        if (header.dataset.sort === currentSortMode) {
+          header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+      });
+    }
+
+    // グローバルスコープに関数を公開
+    window.filterRows = filterRows;
+    window.sortByColumn = sortByColumn;
+
+    // フィルタリングとソートを適用
+    function applyFiltersAndSort() {
+      const searchTerm = searchInput.value.toLowerCase();
+      let filteredData = storeData.filter(item => {
+        // 検索条件をチェック
+        const matchesSearch = item.store.toLowerCase().includes(searchTerm);
+        
+        // 動的ステータス計算
+        item.status = calculateStatus(item);
+        
+        // フィルター条件をチェック
+        const matchesFilter = currentFilter === 'all' || item.status === currentFilter;
+        
+        return matchesSearch && matchesFilter;
+      });
+
+      // 優先度付きソート処理
+      if (currentSortMode === 'deadline') {
+        filteredData.sort((a, b) => {
+          // ステータス優先度を定義
+          const statusPriority = {
+            'active': 1,      // 受付中（最優先）
+            'ongoing': 2,     // 実施中
+            'upcoming': 3,    // 開始予定
+            'waiting': 4,     // 発表待ち
+            'purchase': 5,    // 購入期間中
+            'ended': 6        // 終了済み
+          };
+          
+          const priorityA = statusPriority[a.status] || 7;
+          const priorityB = statusPriority[b.status] || 7;
+          
+          // ステータス優先度が異なる場合は優先度順
+          if (priorityA !== priorityB) {
+            return priorityA - priorityB;
+          }
+          
+          // 同じステータス内での詳細ソート
+          if (a.status === 'active' && b.status === 'active') {
+            // 受付中の場合：締切が近い順（残り時間が少ない順）
+            if (!a.endDate && !b.endDate) return 0;
+            if (!a.endDate) return 1;
+            if (!b.endDate) return -1;
+            return a.endDate.getTime() - b.endDate.getTime();
+          } else if (a.status === 'upcoming' && b.status === 'upcoming') {
+            // 開始予定の場合：開始が近い順
+            if (!a.startDate && !b.startDate) return 0;
+            if (!a.startDate) return 1;
+            if (!b.startDate) return -1;
+            return a.startDate.getTime() - b.startDate.getTime();
+          } else if (a.status === 'waiting' && b.status === 'waiting') {
+            // 発表待ちの場合：結果発表が近い順
+            if (!a.resultDate && !b.resultDate) return 0;
+            if (!a.resultDate) return 1;
+            if (!b.resultDate) return -1;
+            return a.resultDate.getTime() - b.resultDate.getTime();
+          } else if (a.status === 'purchase' && b.status === 'purchase') {
+            // 購入期間中の場合：購入期限が近い順
+            if (!a.purchaseDate && !b.purchaseDate) return 0;
+            if (!a.purchaseDate) return 1;
+            if (!b.purchaseDate) return -1;
+            return a.purchaseDate.getTime() - b.purchaseDate.getTime();
+          } else if (a.status === 'ended' && b.status === 'ended') {
+            // 終了済みの場合：終了が新しい順
+            if (!a.purchaseDate && !b.purchaseDate) {
+              if (!a.endDate && !b.endDate) return 0;
+              if (!a.endDate) return 1;
+              if (!b.endDate) return -1;
+              return b.endDate.getTime() - a.endDate.getTime();
+            }
+            if (!a.purchaseDate) return 1;
+            if (!b.purchaseDate) return -1;
+            return b.purchaseDate.getTime() - a.purchaseDate.getTime();
+          }
+          
+          return 0;
+        });
+      } else if (currentSortMode === 'result') {
+        filteredData.sort((a, b) => {
+          if (!a.resultDate && !b.resultDate) return 0;
+          if (!a.resultDate) return 1;
+          if (!b.resultDate) return -1;
+          
+          const diff = a.resultDate.getTime() - b.resultDate.getTime();
+          return currentSortDirection === 'asc' ? diff : -diff;
+        });
+      } else if (currentSortMode === 'purchase') {
+        filteredData.sort((a, b) => {
+          if (!a.purchaseDate && !b.purchaseDate) return 0;
+          if (!a.purchaseDate) return 1;
+          if (!b.purchaseDate) return -1;
+          
+          const diff = a.purchaseDate.getTime() - b.purchaseDate.getTime();
+          return currentSortDirection === 'asc' ? diff : -diff;
+        });
+      } else {
+        // デフォルトソート（ステータス優先度順）
+        filteredData.sort((a, b) => {
+          const statusPriority = {
+            'active': 1,
+            'ongoing': 2,
+            'upcoming': 3,
+            'waiting': 4,
+            'purchase': 5,
+            'ended': 6
+          };
+          
+          const priorityA = statusPriority[a.status] || 7;
+          const priorityB = statusPriority[b.status] || 7;
+          
+          if (priorityA !== priorityB) {
+            return priorityA - priorityB;
+          }
+          
+          // 同じステータス内では締切が近い順
+          if (a.endDate && b.endDate) {
+            return a.endDate.getTime() - b.endDate.getTime();
+          }
+          
+          return 0;
+        });
+      }
+
+      renderTable(filteredData);
+      updateStats(filteredData);
+    }
+
+    // テーブルの描画
+    function renderTable(data) {
+      let html = '';
+      let currentSection = '';
+
+      data.forEach(item => {
+        // 動的ステータス計算
+        item.status = calculateStatus(item);
+        
+        // セクションヘッダーを動的に生成（ステータスごと）
+        let sectionTitle = '';
+        switch(item.status) {
+          case 'active':
+            sectionTitle = '🔥 受付中（緊急度順）';
+            break;
+          case 'ongoing':
+            sectionTitle = '⚡ 実施中・招待制';
+            break;
+          case 'upcoming':
+            sectionTitle = '📅 開始予定';
+            break;
+          case 'waiting':
+            sectionTitle = '⏳ 発表待ち';
+            break;
+          case 'purchase':
+            sectionTitle = '💰 購入期間中';
+            break;
+          case 'ended':
+            sectionTitle = '✅ 終了済み';
+            break;
+          default:
+            sectionTitle = item.section;
+        }
+        
+        if (sectionTitle !== currentSection) {
+          currentSection = sectionTitle;
+          html += `
+            <tr class="section-header">
+              <td colspan="7" style="padding: 8px 16px; font-weight: 600; color: #495057; font-size: 13px; border-top: 2px solid #dee2e6; border-bottom: 1px solid #dee2e6;">
+                <strong>${sectionTitle}</strong>
+              </td>
+            </tr>
+          `;
+        }
+
+        // 緊急度クラスの決定
+        let urgencyClass = '';
+        if (item.endDate && item.status === 'active') {
+          const now = new Date();
+          const timeDiff = item.endDate.getTime() - now.getTime();
+          const hoursDiff = timeDiff / (1000 * 60 * 60);
+          
+          if (hoursDiff <= 6 && hoursDiff > 0) {
+            urgencyClass = 'very-urgent';
+          } else if (hoursDiff <= 24 && hoursDiff > 0) {
+            urgencyClass = 'urgent';
+          } else if (timeDiff <= 0) {
+            urgencyClass = 'today-ending';
+          }
+        }
+
+        html += `
+          <tr data-status="${item.status}" class="${urgencyClass}" data-store="${item.store}">
+            <td>
+              <div class="store-name">${item.store}</div>
+              <div class="store-type">${item.storeType}</div>
+            </td>
+            <td><span class="status status-${item.status}">${getStatusText(item.status)}</span></td>
+            <td><a href="${item.link}" target="_blank" class="link-btn">${getButtonText(item.status)}</a></td>
+            <td>
+              <div class="period">${item.period}</div>
+              ${item.endDate && item.status === 'active' ? `<div class="countdown" id="${item.countdownId || ''}">残り時間を計算中...</div>` : ''}
+            </td>
+            <td><div class="condition">${item.condition}</div></td>
+            <td><div class="result">${item.result}</div></td>
+            <td><div class="deadline">${item.deadline}</div></td>
+          </tr>
+        `;
+      });
+
+      tableBody.innerHTML = html;
+
+      // カウントダウンの更新
+      updateCountdowns();
+
+      // 検索結果がない場合の表示
+      if (data.length === 0) {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+    }
+
+    // ステータステキストの取得
+    function getStatusText(status) {
+      const statusMap = {
+        'active': '受付中',
+        'upcoming': '開始予定',
+        'ongoing': '実施中',
+        'waiting': '発表待ち',
+        'purchase': '購入期間中',
+        'ended': '終了済み'
+      };
+      return statusMap[status] || status;
+    }
+
+    // ボタンテキストの取得
+    function getButtonText(status) {
+      const buttonMap = {
+        'active': '応募リンク',
+        'upcoming': '確認リンク',
+        'ongoing': '確認リンク',
+        'waiting': '確認リンク',
+        'purchase': '確認リンク',
+        'ended': '確認リンク'
+      };
+      return buttonMap[status] || '確認リンク';
+    }
+
+    // 統計の更新
+    function updateStats(data = storeData) {
+      const stats = {
+        active: 0,
+        upcoming: 0,
+        ongoing: 0,
+        waiting: 0,
+        purchase: 0,
+        ended: 0
+      };
+
+      data.forEach(item => {
+        // 動的ステータス計算
+        const status = calculateStatus(item);
+        if (stats.hasOwnProperty(status)) {
+          stats[status]++;
+        }
+      });
+
+      Object.keys(stats).forEach(key => {
+        const element = document.getElementById(`stat-${key}`);
+        if (element) {
+          element.textContent = stats[key];
+        }
+      });
+    }
+
+    // カウントダウン機能
+    function updateCountdowns() {
+      const countdowns = [
+        { id: 'countdown-1', end: new Date('2025-06-11T11:00:00') },
+        { id: 'countdown-2', end: new Date('2025-06-11T15:00:00') },
+        { id: 'countdown-3', end: new Date('2025-06-09T10:59:00') },
+        { id: 'countdown-5', end: new Date('2025-06-09T17:59:00') },
+        { id: 'countdown-6', end: new Date('2025-06-09T23:59:00') },
+        { id: 'countdown-7', end: new Date('2025-06-09T11:59:00') }
+      ];
+
+      countdowns.forEach(countdown => {
+        const element = document.getElementById(countdown.id);
+        if (!element) return;
+
+        const now = new Date();
+        const diff = countdown.end - now;
+
+        if (diff <= 0) {
+          element.textContent = '受付終了';
+          element.style.color = '#6c757d';
+          element.classList.remove('very-urgent');
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        let timeString = '';
+        if (days > 0) timeString += `${days}日 `;
+        if (hours > 0) timeString += `${hours}時間 `;
+        timeString += `${minutes}分`;
+
+        element.textContent = `残り ${timeString}`;
+
+        // 6時間以内の場合は特別なスタイル
+        if (diff <= 6 * 60 * 60 * 1000) {
+          element.classList.add('very-urgent');
+        }
+      });
+    }
+
+    // 初期化
+    updateSortHeaders();
+    applyFiltersAndSort();
+    setInterval(updateCountdowns, 60000); // 1分ごとに更新
+  </script>
+</body>
+</html>
