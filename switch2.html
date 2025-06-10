@@ -846,6 +846,23 @@
   countdownId: 'countdown-geo'
 },
 
+// エディオン - 第3回（明後日開始）
+{
+  section: '🌏 全国版 抽選販売',
+  store: 'エディオン',
+  storeType: '家電量販店 第3回',
+  link: 'https://www.edion.com/',
+  period: '6/12 10:00〜6/15 23:59',
+  startDate: new Date('2025-06-12T10:00:00'),
+  endDate: new Date('2025-06-15T23:59:00'),
+  condition: 'エディオンカード会員、アプリ会員、あんしん保証会員、ID会員のいずれか。過去のエディオン抽選当選者は対象外',
+  result: '6/20頃発表予定',
+  resultDate: new Date('2025-06-20T12:00:00'),
+  deadline: '当選通知後案内',
+  purchaseDate: null,
+  countdownId: 'countdown-edion'
+},
+
 // ビックカメラ - 第3回（3日後開始予定）
 {
   section: '🌏 全国版 抽選販売',
@@ -1310,7 +1327,8 @@
        { id: 'countdown-seven', end: new Date('2025-06-11T15:00:00') },
        { id: 'countdown-geo', end: new Date('2025-06-16T17:59:00') },
        { id: 'countdown-xprice', end: new Date('2025-06-16T23:59:00') },
-       { id: 'countdown-lohaco', end: new Date('2025-06-17T11:59:00') }
+       { id: 'countdown-lohaco', end: new Date('2025-06-17T11:59:00') },
+       { id: 'countdown-edion', end: new Date('2025-06-15T23:59:00') }
      ];
 
      countdowns.forEach(countdown => {
