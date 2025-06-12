@@ -348,12 +348,62 @@
      font-weight: 600;
      color: #2d3748;
      font-size: 14px;
+     display: flex;
+     align-items: center;
+     gap: 8px;
    }
 
    .store-type {
      font-size: 11px;
      color: #6c757d;
      margin-top: 2px;
+   }
+
+   /* NEWアイコンのスタイル */
+   .new-badge {
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     background: linear-gradient(45deg, #ff4757, #ff6b7a);
+     color: white;
+     font-size: 9px;
+     font-weight: 700;
+     padding: 2px 6px;
+     border-radius: 8px;
+     text-transform: uppercase;
+     letter-spacing: 0.5px;
+     box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
+     animation: newBadgePulse 2s infinite ease-in-out;
+     border: 1px solid rgba(255, 255, 255, 0.3);
+     position: relative;
+     overflow: hidden;
+   }
+
+   .new-badge::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: -100%;
+     width: 100%;
+     height: 100%;
+     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+     animation: newBadgeShine 3s infinite;
+   }
+
+   @keyframes newBadgePulse {
+     0%, 100% { 
+       transform: scale(1);
+       box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
+     }
+     50% { 
+       transform: scale(1.05);
+       box-shadow: 0 3px 12px rgba(255, 71, 87, 0.5);
+     }
+   }
+
+   @keyframes newBadgeShine {
+     0% { left: -100%; }
+     100% { left: 100%; }
    }
 
    .status {
@@ -605,34 +655,23 @@
        flex-direction: column;
        gap: 8px;
      }
+
+     /* モバイル版でのNEWバッジ調整 */
+     .new-badge {
+       font-size: 8px;
+       padding: 1px 4px;
+     }
+
+     .store-name {
+       font-size: 12px;
+       flex-wrap: wrap;
+       gap: 4px;
+     }
    }
 
    @keyframes scrollHint {
      0%, 100% { opacity: 0.4; transform: scaleX(1); }
      50% { opacity: 0.8; transform: scaleX(1.1); }
-   }
-
-   .new-badge, .today-start-badge {
-     display: inline-block;
-     padding: 2px 6px;
-     border-radius: 3px;
-     font-size: 9px;
-     font-weight: 600;
-     margin-left: 6px;
-     vertical-align: middle;
-     animation: newPulse 2s infinite;
-   }
-
-   .new-badge {
-     background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
-     color: white;
-     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-   }
-
-   .today-start-badge {
-     background: linear-gradient(45deg, #4ecdc4, #44a08d);
-     color: white;
-     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
    }
 
    .hidden {
@@ -645,7 +684,7 @@
    <div class="header">
      <h1>抽選応募エージェント | Nintendo Switch 2 完全攻略</h1>
      <div class="subtitle">全国の抽選情報を網羅・分析する専門エージェント | 2025年6月12日現在</div>
-     <div class="update-note">🎮 抽選応募エージェント | 📅 最新情報更新（6/12版） | 🔥 GEO専用サイト本日開始 | 🚀 エディオン第3回本日開始 | ✅ Switch 2世界350万台突破 | ⚠️ 昨日マイニンテンドー・セブンネット締切</div>
+     <div class="update-note">🎮 抽選応募エージェント | 📅 最新情報更新（6/12版） | 🆕 世界販売350万台突破（4日間） | ✅ 現在受付中：LOHACO・GEO・エディオン・Amazon | ⚠️ マイニンテンドー・セブンネット6/11締切済み | 🔥 ヨドバシ高当選率86.8%達成</div>
    </div>
 
    <div class="search-section">
@@ -722,6 +761,9 @@
  </div>
 
  <script>
+   // 本日の日付を取得（NEWアイコン判定用）
+   const TODAY = new Date('2025-06-12');
+   
    // 動的ステータス計算関数
    function calculateStatus(item) {
      const now = new Date();
@@ -766,44 +808,25 @@
      return 'ended';
    }
 
+   // 本日開始かどうかを判定する関数
+   function isStartedToday(item) {
+     if (!item.startDate) return false;
+     
+     const startDate = new Date(item.startDate);
+     const today = new Date(TODAY);
+     
+     // 年月日が一致するかチェック
+     return startDate.getFullYear() === today.getFullYear() &&
+            startDate.getMonth() === today.getMonth() &&
+            startDate.getDate() === today.getDate();
+   }
+
    const storeData = [
-// マイニンテンドーストア（任天堂公式）- 第4回（昨日締切）
+// LOHACO by ASKUL - 現在受付中（新規参入）
 {
-  section: '🌏 全国版 抽選販売',
-  store: 'マイニンテンドーストア',
-  storeType: '任天堂公式 第4回',
-  link: 'https://store-jp.nintendo.com/switch2/',
-  period: '6/3 12:15〜6/11 11:00（締切済み）',
-  startDate: new Date('2025-06-03T12:15:00'),
-  endDate: new Date('2025-06-11T11:00:00'),
-  condition: '第3回落選者は自動引継ぎ。Nintendo Switchソフト50時間以上プレイ(2/28時点)＋Nintendo Switch Online累積1年以上加入＋現在も加入中＋日本アカウント設定',
-  result: '6/17（火）午後以降',
-  resultDate: new Date('2025-06-17T15:00:00'),
-  deadline: '〜7/4（金）まで配送予定',
-  purchaseDate: new Date('2025-07-04T23:59:00')
-},
-
-// セブンネットショッピング - 第2回（昨日締切）
-{
-  section: '🌏 全国版 抽選販売',
-  store: 'セブンネットショッピング',
-  storeType: 'コンビニ系EC 第2回',
-  link: 'https://7net.omni7.jp/general/027003/250530switch2',
-  period: '5/30 15:00〜6/11 15:00（締切済み）',
-  startDate: new Date('2025-05-30T15:00:00'),
-  endDate: new Date('2025-06-11T15:00:00'),
-  condition: '2024/5/30〜2025/6/11期間中に1,000円以上購入履歴(電子書籍除く)＋2025/6/15までに商品受取完了＋メルマガ受信設定',
-  result: '6/20 19:00までに当選者へメール通知',
-  resultDate: new Date('2025-06-20T19:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// LOHACO by ASKUL - 新規参入（6/10開始済み）
-{
-  section: '🌏 全国版 抽選販売',
+  section: '🔥 現在受付中 抽選販売',
   store: 'LOHACO by ASKUL',
-  storeType: 'Yahoo!ショッピング系EC',
+  storeType: 'Yahoo!ショッピング系EC 新規参入',
   link: 'https://shopping.yahoo.co.jp/promotion/campaign/switch2/202506_lohaco/',
   period: '6/10 12:00〜6/17 11:59',
   startDate: new Date('2025-06-10T12:00:00'),
@@ -816,62 +839,43 @@
   countdownId: 'countdown-lohaco'
 },
 
-// XPRICE - 第2回受付中（6/10開始済み）
+// GEO - 第2回受付中（6/12開始）
 {
-  section: '🌏 全国版 抽選販売',
-  store: 'XPRICE本店',
-  storeType: '家電EC 第2回',
-  link: 'https://www.xprice.co.jp/b4.php?id=88982',
-  period: '6/10 12:00〜6/16 23:59',
-  startDate: new Date('2025-06-10T12:00:00'),
-  endDate: new Date('2025-06-16T23:59:00'),
-  condition: 'XPRICE会員登録＋2024/6/1〜2025/6/16の期間中に1回以上の注文履歴（購入金額制限なし、キャンセル・返品除く）',
-  result: '6/19 12:00以降',
-  resultDate: new Date('2025-06-19T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null,
-  countdownId: 'countdown-xprice'
+  section: '🔥 現在受付中 抽選販売',
+  store: 'GEO',
+  storeType: 'エンタメ店 第2回Web方式',
+  link: 'https://geo-online.co.jp/caution',
+  period: '6/12 11:00〜6/16 17:59',
+  startDate: new Date('2025-06-12T11:00:00'),
+  endDate: new Date('2025-06-16T17:59:00'),
+  condition: '店舗レンタル会員機能付きPontaカード所有＋Web申込み（アプリ方式から変更）。過去非当選者優先システム＋6ヶ月当選履歴追跡システム導入',
+  result: '1回目: 6/20、2回目: 6/27（メール通知のみ）',
+  resultDate: new Date('2025-06-20T12:00:00'),
+  deadline: '1回目: 6/21〜6/24、2回目: 6/28〜7/1',
+  purchaseDate: new Date('2025-07-01T23:59:00'),
+  countdownId: 'countdown-geo'
 },
 
-// 駿河屋 - SNS抽選（受付中）
+// エディオン - 第3回（6/12開始）
 {
-  section: '🌏 全国版 抽選販売',
-  store: '駿河屋',
-  storeType: 'ゲーム専門店 SNS抽選',
-  link: 'https://www.suruga-ya.jp/',
-  period: '6/9〜6/16（SNS抽選）',
-  startDate: new Date('2025-06-09T12:00:00'),
-  endDate: new Date('2025-06-16T23:59:00'),
-  condition: '公式X（Twitter）フォロー＋指定投稿のリポスト＋コメント。SNS連動型の新しい抽選方式',
-  result: '6/16発表予定',
-  resultDate: new Date('2025-06-16T18:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null,
-  countdownId: 'countdown-surugaya',
-  isNew: true
-},
-
-// イトーヨーカドー - 第3回（明日開始）
-{
-  section: '🌏 全国版 抽選販売',
-  store: 'イトーヨーカドー',
-  storeType: 'セブン&アイグループ 第3回',
-  link: 'https://www.itoyokado.co.jp/',
-  period: '6/13 11:00〜6/15 23:59',
-  startDate: new Date('2025-06-13T11:00:00'),
+  section: '🔥 現在受付中 抽選販売',
+  store: 'エディオン',
+  storeType: '家電量販店 第3回',
+  link: 'https://www.edion.com/',
+  period: '6/12 10:00〜6/15 23:59',
+  startDate: new Date('2025-06-12T10:00:00'),
   endDate: new Date('2025-06-15T23:59:00'),
-  condition: '7iD登録必須＋二要素認証用電話番号設定＋セブン&アイグループでの購入履歴',
-  result: '6/20以降順次発表',
+  condition: 'エディオンカード会員、アプリ会員、あんしん保証会員、ID会員のいずれか。過去のエディオン抽選当選者は対象外',
+  result: '6/20頃発表予定',
   resultDate: new Date('2025-06-20T12:00:00'),
   deadline: '当選通知後案内',
   purchaseDate: null,
-  countdownId: 'countdown-ito',
-  isNew: true
+  countdownId: 'countdown-edion'
 },
 
 // Amazon - 招待制継続中
 {
-  section: '🌏 全国版 抽選販売',
+  section: '🔥 現在受付中 抽選販売',
   store: 'Amazon',
   storeType: 'EC大手 招待制',
   link: 'https://www.amazon.co.jp/dp/B0DX1BC3R8',
@@ -886,63 +890,43 @@
   purchaseDate: null
 },
 
-// ビックカメラ - 第3回（6/10開始済み）
+// マイニンテンドーストア（任天堂公式）- 第4回（6/11締切済み）
 {
-  section: '🌏 全国版 抽選販売',
-  store: 'ビックカメラ',
-  storeType: '家電量販店 第3回',
-  link: 'https://www.biccamera.com/',
-  period: '6/10 8:00〜6/12 20:59',
-  startDate: new Date('2025-06-10T08:00:00'),
-  endDate: new Date('2025-06-12T20:59:00'),
-  condition: '公式アプリ登録＋ポイントカード登録＋2023年4月〜2025年まで期間中に5万円以上購入履歴。過去のビックカメラSwitch 2抽選当選者は対象外',
-  result: '6/19発表予定',
-  resultDate: new Date('2025-06-19T12:00:00'),
-  deadline: '6/20〜6/22購入期間',
-  purchaseDate: new Date('2025-06-22T23:59:00'),
-  countdownId: 'countdown-bic'
+  section: '📅 6/11-12 重要締切',
+  store: 'マイニンテンドーストア',
+  storeType: '任天堂公式 第4回',
+  link: 'https://store-jp.nintendo.com/switch2/',
+  period: '6/3 12:15〜6/11 11:00（終了）',
+  startDate: new Date('2025-06-03T12:15:00'),
+  endDate: new Date('2025-06-11T11:00:00'),
+  condition: '第3回落選者は自動引継ぎ。Nintendo Switchソフト50時間以上プレイ(2/28時点)＋Nintendo Switch Online累積1年以上加入＋現在も加入中＋日本アカウント設定',
+  result: '6/17（火）午後以降',
+  resultDate: new Date('2025-06-17T15:00:00'),
+  deadline: '〜7/4（金）まで配送予定',
+  purchaseDate: new Date('2025-07-04T23:59:00'),
+  countdownId: 'countdown-mynintendo'
 },
 
-// GEO - 第2回（本日開始・専用サイト）
+// セブンネットショッピング - 第2回（6/11締切済み）
 {
-  section: '🌏 全国版 抽選販売',
-  store: 'GEO',
-  storeType: 'エンタメ店 第2回専用サイト',
-  link: 'https://geo-online.co.jp/caution',
-  period: '6/12 11:00〜6/16 17:59',
-  startDate: new Date('2025-06-12T11:00:00'),
-  endDate: new Date('2025-06-16T17:59:00'),
-  condition: '店舗レンタル会員機能付きPontaカード所有＋専用サイトでWeb申込み。過去非当選者優先システム＋6ヶ月当選履歴追跡システム導入',
-  result: '1回目: 6/20、2回目: 6/27（メール通知のみ）',
-  resultDate: new Date('2025-06-20T12:00:00'),
-  deadline: '1回目: 6/21〜6/24、2回目: 6/28〜7/1',
-  purchaseDate: new Date('2025-07-01T23:59:00'),
-  countdownId: 'countdown-geo',
-  isNew: true,
-  isTodayStart: true
-},
-
-// エディオン - 第3回（本日開始）
-{
-  section: '🌏 全国版 抽選販売',
-  store: 'エディオン',
-  storeType: '家電量販店 第3回',
-  link: 'https://www.edion.com/',
-  period: '6/12 10:00〜6/15 23:59',
-  startDate: new Date('2025-06-12T10:00:00'),
-  endDate: new Date('2025-06-15T23:59:00'),
-  condition: 'エディオンカード会員、アプリ会員、あんしん保証会員、ID会員のいずれか。過去のエディオン抽選当選者は対象外',
-  result: 'ゲーム専門店: 6/27、オンライン: 6/24発表',
-  resultDate: new Date('2025-06-24T12:00:00'),
+  section: '📅 6/11-12 重要締切',
+  store: 'セブンネットショッピング',
+  storeType: 'コンビニ系EC 第2回',
+  link: 'https://7net.omni7.jp/general/027003/250530switch2',
+  period: '5/30 15:00〜6/11 15:00（終了）',
+  startDate: new Date('2025-05-30T15:00:00'),
+  endDate: new Date('2025-06-11T15:00:00'),
+  condition: '2024/5/30〜2025/6/11期間中に1,000円以上購入履歴(電子書籍除く)＋2025/6/15までに商品受取完了＋メルマガ受信設定',
+  result: '6/20 19:00までに当選者へメール通知',
+  resultDate: new Date('2025-06-20T19:00:00'),
   deadline: '当選通知後案内',
   purchaseDate: null,
-  countdownId: 'countdown-edion',
-  isTodayStart: true
+  countdownId: 'countdown-seven'
 },
 
 // 楽天ブックス - 第3回結果発表待ち
 {
-  section: '🌏 全国版 抽選販売',
+  section: '⏳ 結果発表待ち',
   store: '楽天ブックス',
   storeType: 'EC大手 第3回結果発表待ち',
   link: 'https://books.rakuten.co.jp/event/game/switch2/',
@@ -958,7 +942,7 @@
 
 // ヨドバシカメラ - 第2回結果発表済み（高当選率達成）
 {
-  section: '🌏 全国版 抽選販売',
+  section: '✅ 結果発表済み・購入期間中',
   store: 'ヨドバシカメラ',
   storeType: '家電量販店 第2回高当選率86.8%達成',
   link: 'https://limited.yodobashi.com/',
@@ -972,9 +956,93 @@
   purchaseDate: new Date('2025-06-13T23:59:00')
 },
 
+// ヤマダデンキ - 第2回結果発表待ち（3回分割抽選）
+{
+  section: '⏳ 結果発表待ち',
+  store: 'ヤマダデンキ',
+  storeType: '家電量販店 第2回3回分割抽選',
+  link: 'https://www.yamada-denkiweb.com/',
+  period: '5/30〜6/1（終了済み）',
+  startDate: new Date('2025-05-30T10:00:00'),
+  endDate: new Date('2025-06-01T23:59:00'),
+  condition: '2025年4月30日までにヤマダデジタル会員アプリ本登録完了＋2024年5月1日〜2025年6月1日期間中の購入実績。1回応募で3回チャンス',
+  result: '第1回: 6/13、第2回: 6/20、第3回: 6/27（供給改善により分割実施）',
+  resultDate: new Date('2025-06-13T12:00:00'),
+  deadline: '各回発表後3日間',
+  purchaseDate: new Date('2025-06-30T23:59:00')
+},
+
+// ビックカメラ - 第3回（6/10開始済み）
+{
+  section: '⏳ 結果発表待ち',
+  store: 'ビックカメラ',
+  storeType: '家電量販店 第3回',
+  link: 'https://www.biccamera.com/',
+  period: '6/10 8:00〜6/12 20:59（終了）',
+  startDate: new Date('2025-06-10T08:00:00'),
+  endDate: new Date('2025-06-12T20:59:00'),
+  condition: '公式アプリ登録＋ポイントカード登録＋2023年4月〜2025年まで期間中に5万円以上購入履歴。過去のビックカメラSwitch 2抽選当選者は対象外',
+  result: '6/19発表予定',
+  resultDate: new Date('2025-06-19T12:00:00'),
+  deadline: '6/20〜6/22購入期間',
+  purchaseDate: new Date('2025-06-22T23:59:00'),
+  countdownId: 'countdown-bic'
+},
+
+// XPRICE - 第2回結果発表待ち（6/10開始済み）
+{
+  section: '⏳ 結果発表待ち',
+  store: 'XPRICE本店',
+  storeType: '家電EC 第2回',
+  link: 'https://www.xprice.co.jp/b4.php?id=89612',
+  period: '6/10 12:00〜6/16 23:59（終了）',
+  startDate: new Date('2025-06-10T12:00:00'),
+  endDate: new Date('2025-06-16T23:59:00'),
+  condition: 'XPRICE会員登録＋2024/6/1〜2025/6/16の期間中に1回以上の注文履歴（購入金額制限なし、キャンセル・返品除く）',
+  result: '6/19 12:00以降',
+  resultDate: new Date('2025-06-19T12:00:00'),
+  deadline: '当選通知後案内',
+  purchaseDate: null,
+  countdownId: 'countdown-xprice'
+},
+
+// 駿河屋 - SNS抽選（終了済み）
+{
+  section: '🏪 特殊形式・地域限定',
+  store: '駿河屋',
+  storeType: 'ゲーム専門店 SNS抽選',
+  link: 'https://www.suruga-ya.jp/',
+  period: '6/9〜6/16（終了済み）',
+  startDate: new Date('2025-06-09T12:00:00'),
+  endDate: new Date('2025-06-16T23:59:00'),
+  condition: '公式X（Twitter）フォロー＋指定投稿のリポスト＋コメント。SNS連動型の新しい抽選方式',
+  result: '6/16発表済み',
+  resultDate: new Date('2025-06-16T18:00:00'),
+  deadline: '当選通知後案内',
+  purchaseDate: null,
+  countdownId: 'countdown-surugaya'
+},
+
+// イトーヨーカドー - 店舗別実施
+{
+  section: '🏪 特殊形式・地域限定',
+  store: 'イトーヨーカドー',
+  storeType: 'セブン&アイグループ 店舗別実施',
+  link: 'https://www.itoyokado.co.jp/',
+  period: '店舗により異なる',
+  startDate: null,
+  endDate: null,
+  condition: '7iD登録必須＋二要素認証用電話番号設定＋セブン&アイグループでの購入履歴。店舗別に日程・条件が異なる',
+  result: '店舗により異なる',
+  resultDate: null,
+  deadline: '当選通知後案内',
+  purchaseDate: null,
+  countdownId: 'countdown-ito'
+},
+
 // TSUTAYA - 第3回検討中（条件厳格化）
 {
-  section: '🌏 全国版 抽選販売',
+  section: '🏪 特殊形式・地域限定',
   store: 'TSUTAYA',
   storeType: 'レンタル・エンタメ店 第3回検討中',
   link: 'https://tsutaya.tsite.jp/article/game/3888.html',
@@ -990,7 +1058,7 @@
 
 // イオン - 第3回検討中
 {
-  section: '🌏 全国版 抽選販売',
+  section: '🏪 特殊形式・地域限定',
   store: 'イオン',
   storeType: 'スーパー・専門店 第3回検討中',
   link: 'https://www.aeon.com/',
@@ -1004,25 +1072,9 @@
   purchaseDate: null
 },
 
-// ヤマダデンキ - 第2回結果発表待ち（3回分割抽選）
-{
-  section: '🌏 全国版 抽選販売',
-  store: 'ヤマダデンキ',
-  storeType: '家電量販店 第2回3回分割抽選',
-  link: 'https://www.yamada-denkiweb.com/',
-  period: '5/30〜6/1（終了済み）',
-  startDate: new Date('2025-05-30T10:00:00'),
-  endDate: new Date('2025-06-01T23:59:00'),
-  condition: '2025年4月30日までにヤマダデジタル会員アプリ本登録完了＋2024年5月1日〜2025年6月1日期間中の購入実績。1回応募で3回チャンス',
-  result: '第1回: 6/13、第2回: 6/20、第3回: 6/27（供給改善により分割実施）',
-  resultDate: new Date('2025-06-13T12:00:00'),
-  deadline: '各回発表後3日間',
-  purchaseDate: new Date('2025-06-30T23:59:00')
-},
-
 // トイザらス - 第4回検討中
 {
-  section: '🏪 店舗限定 抽選販売',
+  section: '🏪 特殊形式・地域限定',
   store: 'トイザらス',
   storeType: 'おもちゃ専門店 第4回検討中',
   link: 'https://www.toysrus.co.jp/',
@@ -1036,16 +1088,16 @@
   purchaseDate: null
 },
 
-// ドン・キホーテ - 第3回検討中
+// ドン・キホーテ - 第3回検討中（新規参入）
 {
-  section: '🌏 全国版 抽選販売',
+  section: '🏪 特殊形式・地域限定',
   store: 'ドン・キホーテ',
   storeType: 'ディスカウント店 第3回検討中',
   link: 'https://www.donki.com/',
   period: '第3回実施検討中',
   startDate: null,
   endDate: null,
-  condition: '日本国内在住のmajicaアプリ会員限定',
+  condition: '日本国内在住のmajicaアプリ会員限定。第2回から新規参入した注目店舗',
   result: '実施時期未定',
   resultDate: null,
   deadline: '当選通知後案内',
@@ -1296,13 +1348,15 @@
          }
        }
 
+       // NEWバッジの表示判定
+       const showNewBadge = isStartedToday(item);
+
        html += `
          <tr data-status="${item.status}" class="${urgencyClass}" data-store="${item.store}">
            <td>
              <div class="store-name">
                ${item.store}
-               ${item.isNew ? '<span class="new-badge">NEW</span>' : ''}
-               ${item.isTodayStart ? '<span class="today-start-badge">本日開始</span>' : ''}
+               ${showNewBadge ? '<span class="new-badge">NEW</span>' : ''}
              </div>
              <div class="store-type">${item.storeType}</div>
            </td>
@@ -1388,12 +1442,14 @@
    // カウントダウン機能
    function updateCountdowns() {
      const countdowns = [
-       { id: 'countdown-bic', end: new Date('2025-06-12T20:59:00') },
+       { id: 'countdown-lohaco', end: new Date('2025-06-17T11:59:00') },
        { id: 'countdown-geo', end: new Date('2025-06-16T17:59:00') },
+       { id: 'countdown-edion', end: new Date('2025-06-15T23:59:00') },
+       { id: 'countdown-mynintendo', end: new Date('2025-06-11T11:00:00') },
+       { id: 'countdown-seven', end: new Date('2025-06-11T15:00:00') },
+       { id: 'countdown-bic', end: new Date('2025-06-12T20:59:00') },
        { id: 'countdown-xprice', end: new Date('2025-06-16T23:59:00') },
        { id: 'countdown-surugaya', end: new Date('2025-06-16T23:59:00') },
-       { id: 'countdown-lohaco', end: new Date('2025-06-17T11:59:00') },
-       { id: 'countdown-edion', end: new Date('2025-06-15T23:59:00') },
        { id: 'countdown-ito', end: new Date('2025-06-15T23:59:00') }
      ];
 
