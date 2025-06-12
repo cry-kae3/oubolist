@@ -1088,20 +1088,21 @@
   purchaseDate: null
 },
 
-// ドン・キホーテ - 第3回検討中（新規参入）
+// ドン・キホーテ - 第3回（6/12開始）
 {
-  section: '🏪 特殊形式・地域限定',
+  section: '🔥 現在受付中 抽選販売',
   store: 'ドン・キホーテ',
-  storeType: 'ディスカウント店 第3回検討中',
+  storeType: 'ディスカウント店 第3回',
   link: 'https://www.donki.com/',
-  period: '第3回実施検討中',
-  startDate: null,
-  endDate: null,
-  condition: '日本国内在住のmajicaアプリ会員限定。第2回から新規参入した注目店舗',
-  result: '実施時期未定',
-  resultDate: null,
+  period: '6/12 10:00〜6/16 23:59',
+  startDate: new Date('2025-06-12T10:00:00'),
+  endDate: new Date('2025-06-16T23:59:00'),
+  condition: '日本国内在住のmajicaアプリ会員限定。第2回から新規参入した注目店舗。majicaアプリ内の抽選ページから応募',
+  result: '6/22頃発表予定',
+  resultDate: new Date('2025-06-22T12:00:00'),
   deadline: '当選通知後案内',
-  purchaseDate: null
+  purchaseDate: null,
+  countdownId: 'countdown-donki'
 }
 ];
    
@@ -1445,6 +1446,7 @@
        { id: 'countdown-lohaco', end: new Date('2025-06-17T11:59:00') },
        { id: 'countdown-geo', end: new Date('2025-06-16T17:59:00') },
        { id: 'countdown-edion', end: new Date('2025-06-15T23:59:00') },
+       { id: 'countdown-donki', end: new Date('2025-06-16T23:59:00') },
        { id: 'countdown-mynintendo', end: new Date('2025-06-11T11:00:00') },
        { id: 'countdown-seven', end: new Date('2025-06-11T15:00:00') },
        { id: 'countdown-bic', end: new Date('2025-06-12T20:59:00') },
