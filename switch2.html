@@ -684,7 +684,6 @@
    <div class="header">
      <h1>抽選応募エージェント | Nintendo Switch 2 完全攻略</h1>
      <div class="subtitle">全国の抽選情報を網羅・分析する専門エージェント | 2025年6月14日現在</div>
-     <div class="update-note">🎮 抽選応募エージェント | 📅 最新情報更新（6/14版） | 🆕 TSUTAYAアプリ抽選本日開始 | ✅ 現在受付中：LOHACO・GEO・ドンキ・Amazon・TSUTAYA | ⚠️ エディオン6/15締切間近 | 📢 6/17マイニンテンドー結果発表予定</div>
    </div>
 
    <div class="search-section">
@@ -1052,20 +1051,21 @@
   purchaseDate: new Date('2025-06-13T23:59:00')
 },
 
-// 駿河屋 - SNS抽選（終了済み）
+// 駿河屋 - SNS抽選（明日締切）
 {
-  section: '✅ 結果発表済み・購入期間終了',
+  section: '⚠️ 明日締切',
   store: '駿河屋',
   storeType: 'ゲーム専門店 SNS抽選',
-  link: 'https://www.suruga-ya.jp/',
-  period: '6/9〜6/16（終了済み）',
+  link: 'https://www.suruga-ya.jp/blog/?q=switch2_chusen250609.html',
+  period: '6/9 12:00〜6/15 23:59（明日締切）',
   startDate: new Date('2025-06-09T12:00:00'),
-  endDate: new Date('2025-06-16T23:59:00'),
-  condition: '公式X（Twitter）フォロー＋指定投稿のリポスト＋コメント。SNS連動型の新しい抽選方式',
-  result: '6/16発表済み',
-  resultDate: new Date('2025-06-16T18:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
+  endDate: new Date('2025-06-15T23:59:00'),
+  condition: '駿河屋更新情報【公式】アカウント(@surugaya_kosin)フォロー＋指定投稿のリポスト＋コメント必須。マイページ登録必要。Nintendo Switch 2マリオカートセット対象',
+  result: '6/16(月)発表',
+  resultDate: new Date('2025-06-16T12:00:00'),
+  deadline: '6/16〜6/22 支払い期間',
+  purchaseDate: new Date('2025-06-22T23:59:00'),
+  countdownId: 'countdown-surugaya'
 },
 
 // イトーヨーカドー - 店舗別実施
@@ -1458,7 +1458,8 @@
        { id: 'countdown-lohaco', end: new Date('2025-06-17T11:59:00') },
        { id: 'countdown-geo', end: new Date('2025-06-16T17:59:00') },
        { id: 'countdown-edion', end: new Date('2025-06-15T23:59:00') },
-       { id: 'countdown-donki', end: new Date('2025-06-16T23:59:00') }
+       { id: 'countdown-donki', end: new Date('2025-06-16T23:59:00') },
+       { id: 'countdown-surugaya', end: new Date('2025-06-15T23:59:00') }
      ];
 
      countdowns.forEach(countdown => {
