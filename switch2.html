@@ -695,9 +695,8 @@
      <div class="filter-controls">
        <div class="filter-buttons">
          <button class="filter-btn active" onclick="filterRows('all')">すべて表示</button>
-         <button class="filter-btn" onclick="filterRows('active')">受付中</button>
          <button class="filter-btn" onclick="filterRows('upcoming')">開始予定</button>
-         <button class="filter-btn" onclick="filterRows('ongoing')">実施中</button>
+         <button class="filter-btn" onclick="filterRows('active')">応募受付中</button>
          <button class="filter-btn" onclick="filterRows('waiting')">発表待ち</button>
          <button class="filter-btn" onclick="filterRows('purchase')">購入期間中</button>
          <button class="filter-btn" onclick="filterRows('ended')">終了済み</button>
@@ -731,16 +730,12 @@
 
    <div class="stats">
      <div class="stat-item">
-       <div class="stat-number" id="stat-active">0</div>
-       <div class="stat-label">受付中</div>
-     </div>
-     <div class="stat-item">
        <div class="stat-number" id="stat-upcoming">0</div>
        <div class="stat-label">開始予定</div>
      </div>
      <div class="stat-item">
-       <div class="stat-number" id="stat-ongoing">0</div>
-       <div class="stat-label">実施中</div>
+       <div class="stat-number" id="stat-active">0</div>
+       <div class="stat-label">応募受付中</div>
      </div>
      <div class="stat-item">
        <div class="stat-number" id="stat-waiting">0</div>
@@ -776,11 +771,6 @@
        }
      }
      
-     // 招待制・実施中の場合（終了日がない継続中の抽選）
-     if (item.isOngoing && !item.endDate) {
-       return 'ongoing';
-     }
-     
      // 結果発表待ちかチェック（応募期間終了後、結果発表前）
      if (item.endDate && item.resultDate) {
        if (now > item.endDate && now < item.resultDate) {
@@ -801,6 +791,11 @@
      }
      if (item.endDate && now > item.endDate && !item.resultDate) {
        return 'ended';
+     }
+     
+     // 招待制など継続中のものは特別扱い（応募受付中として扱う）
+     if (item.isOngoing) {
+       return 'active';
      }
      
      // デフォルトは終了済み
@@ -1370,12 +1365,11 @@
        filteredData.sort((a, b) => {
          // ステータス優先度を定義
          const statusPriority = {
-           'active': 1,      // 受付中（最優先）
-           'ongoing': 2,     // 実施中
-           'upcoming': 3,    // 開始予定
-           'waiting': 4,     // 発表待ち
-           'purchase': 5,    // 購入期間中
-           'ended': 6        // 終了済み
+           'upcoming': 1,    // 開始予定（最優先）
+           'active': 2,      // 応募受付中
+           'waiting': 3,     // 発表待ち
+           'purchase': 4,    // 購入期間中
+           'ended': 5        // 終了済み
          };
          
          const priorityA = statusPriority[a.status] || 7;
@@ -1488,14 +1482,11 @@
        // セクションヘッダーを動的に生成（ステータスごと）
        let sectionTitle = '';
        switch(item.status) {
-         case 'active':
-           sectionTitle = '🔥 受付中（緊急度順）';
-           break;
-         case 'ongoing':
-           sectionTitle = '⚡ 実施中・招待制';
-           break;
          case 'upcoming':
            sectionTitle = '📅 開始予定';
+           break;
+         case 'active':
+           sectionTitle = '🔥 応募受付中（緊急度順）';
            break;
          case 'waiting':
            sectionTitle = '⏳ 発表待ち';
@@ -1578,9 +1569,8 @@
    // ステータステキストの取得
    function getStatusText(status) {
      const statusMap = {
-       'active': '受付中',
        'upcoming': '開始予定',
-       'ongoing': '実施中',
+       'active': '応募受付中',
        'waiting': '発表待ち',
        'purchase': '購入期間中',
        'ended': '終了済み'
