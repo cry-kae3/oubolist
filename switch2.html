@@ -1442,12 +1442,11 @@
        // デフォルトソート（ステータス優先度順）
        filteredData.sort((a, b) => {
          const statusPriority = {
-           'active': 1,
-           'ongoing': 2,
-           'upcoming': 3,
-           'waiting': 4,
-           'purchase': 5,
-           'ended': 6
+           'upcoming': 1,
+           'active': 2,
+           'waiting': 3,
+           'purchase': 4,
+           'ended': 5
          };
          
          const priorityA = statusPriority[a.status] || 7;
@@ -1594,9 +1593,8 @@
    // 統計の更新
    function updateStats(data = storeData) {
      const stats = {
-       active: 0,
        upcoming: 0,
-       ongoing: 0,
+       active: 0,
        waiting: 0,
        purchase: 0,
        ended: 0
