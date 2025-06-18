@@ -760,13 +760,13 @@
 
  <script>
    // 本日の日付を取得（NEWアイコン判定用）
-   const TODAY = new Date('2025-06-18');
+   const TODAY = new Date('2025-06-18T12:00:00');
    
    // 動的ステータス計算関数
    function calculateStatus(item) {
      const now = new Date();
      
-     // 応募期間中かチェック
+     // 応募期間中かチェック（開始日と終了日がある場合のみ）
      if (item.startDate && item.endDate) {
        if (now >= item.startDate && now <= item.endDate) {
          return 'active';
@@ -776,23 +776,23 @@
        }
      }
      
-     // 結果発表待ちかチェック
+     // 招待制・実施中の場合（終了日がない継続中の抽選）
+     if (item.isOngoing && !item.endDate) {
+       return 'ongoing';
+     }
+     
+     // 結果発表待ちかチェック（応募期間終了後、結果発表前）
      if (item.endDate && item.resultDate) {
        if (now > item.endDate && now < item.resultDate) {
          return 'waiting';
        }
      }
      
-     // 購入期間中かチェック
+     // 購入期間中かチェック（結果発表後、購入期限前）
      if (item.resultDate && item.purchaseDate) {
        if (now >= item.resultDate && now <= item.purchaseDate) {
          return 'purchase';
        }
-     }
-     
-     // 招待制・実施中の場合
-     if (item.isOngoing) {
-       return 'ongoing';
      }
      
      // 期限切れかチェック
@@ -803,6 +803,7 @@
        return 'ended';
      }
      
+     // デフォルトは終了済み
      return 'ended';
    }
 
@@ -845,7 +846,7 @@
   storeType: 'EC大手 招待制',
   link: 'https://www.amazon.co.jp/dp/B0DX1BC3R8',
   period: '4/24〜（招待制継続）',
-  startDate: new Date('2025-04-24T10:00:00'),
+  startDate: null,
   endDate: null,
   isOngoing: true,
   condition: 'Amazonアカウント。招待リクエスト有効期間3ヶ月。招待キャンセル後は同商品再注文不可',
@@ -862,7 +863,7 @@
   storeType: '家電量販店 上位会員招待制（新規参入）',
   link: 'https://www.nojima.co.jp/',
   period: '招待制継続中',
-  startDate: new Date('2025-06-10T10:00:00'),
+  startDate: null,
   endDate: null,
   isOngoing: true,
   condition: 'ノジマモバイル会員（ゴールド以上）限定招待。過去1年間の購入実績50,000円以上。招待メール受信者のみ応募可能',
@@ -883,9 +884,9 @@
   endDate: null,
   condition: '第4回日本仕様7.06%（史上最低）、マリオカートセット10.4%、多言語仕様25.8%。第5回の詳細は7月上旬頃発表予定。前回条件：Nintendo Switchソフト50時間以上プレイ＋Nintendo Switch Online累積1年以上加入',
   result: '第4回: 6/17発表済み（史上最低当選率）',
-  resultDate: new Date('2025-07-05T15:00:00'),
+  resultDate: null,
   deadline: '第5回は7月上旬発表',
-  purchaseDate: new Date('2025-07-04T23:59:00')
+  purchaseDate: null
 },
 
 // ソフマップ - 第4回購入期間（結果発表済み）
