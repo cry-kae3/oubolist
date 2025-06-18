@@ -215,24 +215,6 @@
      position: relative;
    }
 
-   .scroll-indicator-top,
-   .scroll-indicator-bottom {
-     display: none;
-     height: 8px;
-     background: linear-gradient(90deg, #dee2e6, #6c757d, #dee2e6);
-     border-radius: 4px;
-     margin: 0 10px;
-     opacity: 0.7;
-   }
-
-   .scroll-indicator-top {
-     margin-bottom: 5px;
-   }
-
-   .scroll-indicator-bottom {
-     margin-top: 5px;
-   }
-
    table {
      width: 100%;
      border-collapse: collapse;
@@ -278,21 +260,6 @@
      font-weight: bold;
    }
 
-   th::before {
-     content: '';
-     position: absolute;
-     bottom: 0;
-     left: 0;
-     width: 0;
-     height: 2px;
-     background: #495057;
-     transition: width 0.3s ease;
-   }
-
-   th:hover::before {
-     width: 100%;
-   }
-
    td {
      padding: 12px 10px !important;
      border-bottom: 1px solid #f1f3f4;
@@ -301,14 +268,8 @@
      transition: all 0.2s ease;
    }
 
-   td:nth-child(3),
-   td:nth-child(4) {
-     white-space: nowrap;
-   }
-
    tr:hover {
      background: #f8f9fa;
-     transform: scale(1.001);
    }
 
    .urgent {
@@ -373,20 +334,6 @@
      letter-spacing: 0.5px;
      box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
      animation: newBadgePulse 2s infinite ease-in-out;
-     border: 1px solid rgba(255, 255, 255, 0.3);
-     position: relative;
-     overflow: hidden;
-   }
-
-   .new-badge::before {
-     content: '';
-     position: absolute;
-     top: 0;
-     left: -100%;
-     width: 100%;
-     height: 100%;
-     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-     animation: newBadgeShine 3s infinite;
    }
 
    @keyframes newBadgePulse {
@@ -398,11 +345,6 @@
        transform: scale(1.05);
        box-shadow: 0 3px 12px rgba(255, 71, 87, 0.5);
      }
-   }
-
-   @keyframes newBadgeShine {
-     0% { left: -100%; }
-     100% { left: 100%; }
    }
 
    .status {
@@ -457,22 +399,6 @@
      border: 1px solid #b3e5fc;
    }
 
-   .model {
-     background: #e9ecef;
-     color: #495057;
-     padding: 3px 6px;
-     border-radius: 4px;
-     font-size: 11px;
-     display: inline-block;
-     margin: 1px;
-     transition: all 0.2s ease;
-   }
-
-   .model:hover {
-     background: #dee2e6;
-     transform: scale(1.05);
-   }
-
    .period {
      font-weight: 500;
      color: #495057;
@@ -502,21 +428,6 @@
      display: inline-block;
      position: relative;
      overflow: hidden;
-   }
-
-   .link-btn::before {
-     content: '';
-     position: absolute;
-     top: 0;
-     left: -100%;
-     width: 100%;
-     height: 100%;
-     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-     transition: left 0.4s;
-   }
-
-   .link-btn:hover::before {
-     left: 100%;
    }
 
    .link-btn:hover {
@@ -565,10 +476,6 @@
      border-top: 2px solid #dee2e6;
    }
 
-   .section-header td {
-     border-bottom: 1px solid #dee2e6;
-   }
-
    .countdown {
      font-size: 10px;
      color: #dc3545;
@@ -593,19 +500,8 @@
      font-size: 1rem;
    }
 
-   @media (max-width: 1200px) {
-     .condition {
-       font-size: 10px;
-     }
-     
-     .search-input {
-       width: 250px;
-     }
-
-     .filter-controls {
-       flex-direction: column;
-       gap: 12px;
-     }
+   .hidden {
+     display: none;
    }
 
    @media (max-width: 768px) {
@@ -626,54 +522,14 @@
        font-size: 11px;
      }
      
-     .filter-section, .search-section {
-       padding: 12px 16px;
-     }
-     
      .search-input {
        width: 200px;
-       font-size: 0.85rem;
      }
      
      .stats {
        gap: 20px;
        padding: 12px;
      }
-     
-     .condition {
-       font-size: 9px;
-     }
-
-     .scroll-indicator-top,
-     .scroll-indicator-bottom {
-       display: block;
-       animation: scrollHint 2s infinite ease-in-out;
-     }
-
-     .filter-controls {
-       flex-direction: column;
-       gap: 8px;
-     }
-
-     .new-badge {
-       font-size: 8px;
-       padding: 1px 4px;
-     }
-
-     .store-name {
-       font-size: 12px;
-       flex-wrap: wrap;
-       gap: 4px;
-     }
-   }
-
-   @keyframes scrollHint {
-     0%, 100% { opacity: 0.4; transform: scaleX(1); }
-     50% { opacity: 0.8; transform: scaleX(1.1); }
-   }
-
-   .hidden {
-     display: none;
    }
  </style>
 </head>
@@ -705,7 +561,6 @@
    </div>
 
    <div class="table-container">
-     <div class="scroll-indicator-top"></div>
      <table>
        <thead>
          <tr>
@@ -722,7 +577,6 @@
          <!-- データは JavaScript で動的に生成 -->
        </tbody>
      </table>
-     <div class="scroll-indicator-bottom"></div>
      <div id="noResults" class="no-results hidden">
        検索条件に一致する店舗が見つかりませんでした。
      </div>
@@ -750,18 +604,224 @@
        <div class="stat-label">終了済み</div>
      </div>
    </div>
-
  </div>
 
  <script>
-   // 本日の日付を取得（NEWアイコン判定用）
+   // 本日の日付
    const TODAY = new Date('2025-06-18T12:00:00');
    
+   // Nintendo Switch 2 抽選販売データ
+   const storeData = [
+     // 現在受付中
+     {
+       store: 'お宝創庫',
+       storeType: '中古品店 第3回（6/23まで）',
+       link: 'https://www.otakaragurakugo.com/',
+       period: '6/16〜6/23 23:45',
+       startDate: new Date('2025-06-16T10:00:00'),
+       endDate: new Date('2025-06-23T23:45:00'),
+       condition: 'お宝創庫アプリ会員限定。2024年5月1日〜2025年5月14日にTVゲーム売買履歴必須。応募倍率17〜50倍程度と予測',
+       result: '6/27発表予定',
+       resultDate: new Date('2025-06-27T12:00:00'),
+       deadline: '当選通知後案内',
+       status: 'active',
+       countdownId: 'countdown-otakara'
+     },
+     {
+       store: 'Amazon',
+       storeType: 'EC大手 招待制',
+       link: 'https://www.amazon.co.jp/dp/B0DX1BC3R8',
+       period: '4/24〜（招待制継続）',
+       startDate: null,
+       endDate: null,
+       condition: 'Amazonアカウント。招待リクエスト有効期間3ヶ月。招待キャンセル後は同商品再注文不可',
+       result: '随時招待メール通知（過去実績: 5/8、5/13頃）',
+       resultDate: null,
+       deadline: '招待メール受信後48時間以内',
+       status: 'active'
+     },
+     {
+       store: 'ノジマ',
+       storeType: '家電量販店 上位会員招待制（新規参入）',
+       link: 'https://www.nojima.co.jp/',
+       period: '招待制継続中',
+       startDate: null,
+       endDate: null,
+       condition: 'ノジマモバイル会員（ゴールド以上）限定招待。過去1年間の購入実績50,000円以上。招待メール受信者のみ応募可能',
+       result: '随時招待メール通知',
+       resultDate: null,
+       deadline: '招待メール受信後48時間以内',
+       status: 'active'
+     },
+     // 次回抽選予定
+     {
+       store: 'マイニンテンドーストア',
+       storeType: '任天堂公式 史上最低7.06%当選率、第5回は7月上旬発表',
+       link: 'https://store-jp.nintendo.com/switch2/',
+       period: '第4回終了（6/17発表、史上最低7.06%）',
+       startDate: null,
+       endDate: null,
+       condition: '第4回日本仕様7.06%（史上最低）、マリオカートセット10.4%、多言語仕様25.8%。第5回の詳細は7月上旬頃発表予定。前回条件：Nintendo Switchソフト50時間以上プレイ＋Nintendo Switch Online累積1年以上加入',
+       result: '第4回: 6/17発表済み（史上最低当選率）',
+       resultDate: null,
+       deadline: '第5回は7月上旬発表',
+       status: 'upcoming'
+     },
+     // 購入期間中
+     {
+       store: 'ソフマップ',
+       storeType: 'PC・家電店 第4回購入期間（6/18結果発表済み）',
+       link: 'https://www.sofmap.com/',
+       period: '6/18〜6/20購入期間（オンライン）、6/21〜27（店舗）',
+       startDate: new Date('2025-06-18T10:00:00'),
+       endDate: new Date('2025-06-27T23:59:00'),
+       condition: '第4回当選者のみ。6/18 10:00に結果発表済み。オンライン購入は6/18〜20、店舗受取は6/21〜27。本人確認書類＋会員証必須',
+       result: '6/18発表済み',
+       resultDate: new Date('2025-06-18T10:00:00'),
+       deadline: 'オンライン6/20、店舗6/27まで',
+       status: 'purchase'
+     },
+     {
+       store: '駿河屋',
+       storeType: 'ゲーム専門店 SNS抽選',
+       link: 'https://www.suruga-ya.jp/blog/?q=switch2_chusen250609.html',
+       period: '6/16〜6/22 支払い期間',
+       startDate: new Date('2025-06-16T12:00:00'),
+       endDate: new Date('2025-06-22T23:59:00'),
+       condition: '当選者のみ。駿河屋更新情報【公式】アカウント(@surugaya_kosin)フォロー＋指定投稿のリポスト＋コメント必須。Nintendo Switch 2マリオカートセット対象',
+       result: '6/16発表済み',
+       resultDate: new Date('2025-06-16T12:00:00'),
+       deadline: '6/22まで支払い期間',
+       status: 'purchase'
+     },
+     // 結果発表待ち
+     {
+       store: '楽天ブックス',
+       storeType: 'EC大手 第4回（6/20結果発表予定）',
+       link: 'https://books.rakuten.co.jp/event/game/switch2/',
+       period: '6/18 10:00〜6/19 11:59（終了済み）',
+       startDate: new Date('2025-06-18T10:00:00'),
+       endDate: new Date('2025-06-19T11:59:00'),
+       condition: '楽天会員＋2024年6月3日〜2025年6月3日期間中に楽天ブックス購入履歴必須（電子書籍・ダウンロード除く）。過去のSwitch 2抽選当選者は永続的に対象外',
+       result: '6/20（金）発表予定（当選者のみ）',
+       resultDate: new Date('2025-06-20T12:00:00'),
+       deadline: '当選通知後案内',
+       status: 'waiting'
+     },
+     {
+       store: 'ジョーシン',
+       storeType: '家電量販店 第4回抽選販売（メール招待制）',
+       link: 'https://www.joshin.co.jp/',
+       period: '6/13 10:00〜6/16 9:59（終了済み）',
+       startDate: new Date('2025-06-13T10:00:00'),
+       endDate: new Date('2025-06-16T09:59:00'),
+       condition: '対象会員への個別メール招待のみ。6/3時点でジョーシンweb会員（ゴールド/プラチナ/VIP）＋6/12 21:59時点でwebショップメルマガ登録＋過去にSwitch 2購入・当選履歴なし',
+       result: '6/26（水）夕方以降',
+       resultDate: new Date('2025-06-26T18:00:00'),
+       deadline: '当選通知後案内',
+       status: 'waiting'
+     },
+     {
+       store: 'エディオン',
+       storeType: '家電量販店 第3回',
+       link: 'https://www.edion.com/',
+       period: '6/12 10:00〜6/15 23:59（終了済み）',
+       startDate: new Date('2025-06-12T10:00:00'),
+       endDate: new Date('2025-06-15T23:59:00'),
+       condition: 'エディオンカード会員、アプリ会員、あんしん保証会員、ID会員のいずれか。過去のエディオン抽選当選者は対象外',
+       result: 'ゲーム取扱店舗: 6/27、エディオンネット: 6/24',
+       resultDate: new Date('2025-06-24T12:00:00'),
+       deadline: '当選通知後案内',
+       status: 'waiting'
+     },
+     {
+       store: 'TSUTAYA',
+       storeType: 'レンタル・エンタメ店 第3回アプリ抽選（6/18頃発表）',
+       link: 'https://tsutaya.tsite.jp/article/game/3888.html',
+       period: '6/14 開店〜6/15 閉店（終了済み）',
+       startDate: new Date('2025-06-14T10:00:00'),
+       endDate: new Date('2025-06-15T21:00:00'),
+       condition: 'TSUTAYAアプリでのログイン＋モバイルVカード利用登録＋PUSH通知設定オン必須。一人一回限り応募可能',
+       result: '6/18頃発表予定',
+       resultDate: new Date('2025-06-18T18:00:00'),
+       deadline: '当選通知後案内',
+       status: 'waiting'
+     },
+     {
+       store: 'ヤマダデンキ',
+       storeType: '家電量販店 第2回3回分割抽選',
+       link: 'https://www.yamada-denkiweb.com/',
+       period: '5/30〜6/1（終了済み）',
+       startDate: new Date('2025-05-30T10:00:00'),
+       endDate: new Date('2025-06-01T23:59:00'),
+       condition: '2025年4月30日までにヤマダデジタル会員アプリ本登録完了＋2024年5月1日〜2025年6月1日期間中の購入実績。1回応募で3回チャンス',
+       result: '第1回: 6/13発表済み、第2回: 6/20、第3回: 6/27',
+       resultDate: new Date('2025-06-20T12:00:00'),
+       deadline: '各回発表後3日間',
+       status: 'waiting'
+     },
+     {
+       store: 'GEO',
+       storeType: 'エンタメ店 第2回Web方式（応募期間延長済み）',
+       link: 'https://geo-online.co.jp/news/726',
+       period: '6/12 11:00〜6/17 17:59（延長済み・終了）',
+       startDate: new Date('2025-06-12T11:00:00'),
+       endDate: new Date('2025-06-17T17:59:00'),
+       condition: 'GEOアプリから応募（店舗レンタル会員機能付きPontaカード所有＋Web申込み）。過去非当選者優先システム＋6ヶ月当選履歴追跡システム導入。技術的問題で17日まで延長',
+       result: '1回目: 6/20、2回目: 6/27（メール通知のみ）',
+       resultDate: new Date('2025-06-20T12:00:00'),
+       deadline: '1回目: 6/21〜6/24、2回目: 6/28〜7/1',
+       status: 'waiting'
+     },
+     // 終了済み
+     {
+       store: 'ビックカメラ',
+       storeType: '家電量販店 第3回（6/2早期発表済み）',
+       link: 'https://www.biccamera.com/',
+       period: '6/10 8:00〜6/12 20:59（終了）',
+       startDate: new Date('2025-06-10T08:00:00'),
+       endDate: new Date('2025-06-12T20:59:00'),
+       condition: '公式アプリ登録＋ポイントカード登録＋2023年4月〜2025年まで期間中に5万円以上購入履歴。過去のビックカメラSwitch 2抽選当選者は対象外',
+       result: '6/2発表済み（予定より早期）',
+       resultDate: new Date('2025-06-02T17:00:00'),
+       deadline: '6/5〜6/8購入期間（終了済み）',
+       status: 'ended'
+     },
+     {
+       store: 'ヨドバシカメラ',
+       storeType: '家電量販店 第2回高当選率86.8%達成',
+       link: 'https://limited.yodobashi.com/',
+       period: '6/6〜6/9（終了済み）',
+       startDate: new Date('2025-06-06T11:00:00'),
+       endDate: new Date('2025-06-09T10:59:00'),
+       condition: 'ヨドバシ会員＋2024/5/1〜2025/4/30期間中に累計5万円以上購入履歴。緊急追加配分により各店舗100-200台増加',
+       result: '6/10 10:00発表済み（一部店舗86.8%の高当選率）',
+       resultDate: new Date('2025-06-10T10:00:00'),
+       deadline: '6/13 23:59まで（終了済み）',
+       status: 'ended'
+     },
+     {
+       store: 'コジマ',
+       storeType: '家電量販店 第2回',
+       link: 'https://www.kojima.net/ec/Special/lottery/nintendo_switch2_index.html',
+       period: '6/7〜6/10（終了済み）',
+       startDate: new Date('2025-06-07T10:00:00'),
+       endDate: new Date('2025-06-10T23:59:00'),
+       condition: 'コジマ×ビックカメラカード必須。マイ店舗登録＋過去1年間の購入履歴。店舗受取のみ',
+       result: '6/14 17:00発表済み',
+       resultDate: new Date('2025-06-14T17:00:00'),
+       deadline: '6/14〜6/15購入期間（終了済み）',
+       status: 'ended'
+     }
+   ];
+
+   let currentFilter = 'all';
+
    // 動的ステータス計算関数
    function calculateStatus(item) {
      const now = new Date();
      
-     // 応募期間中かチェック（開始日と終了日がある場合のみ）
+     // 応募期間中かチェック
      if (item.startDate && item.endDate) {
        if (now >= item.startDate && now <= item.endDate) {
          return 'active';
@@ -771,544 +831,49 @@
        }
      }
      
-     // 結果発表待ちかチェック（応募期間終了後、結果発表前）
+     // 結果発表待ちかチェック
      if (item.endDate && item.resultDate) {
        if (now > item.endDate && now < item.resultDate) {
          return 'waiting';
        }
      }
      
-     // 購入期間中かチェック（結果発表後、購入期限前）
-     if (item.resultDate && item.purchaseDate) {
-       if (now >= item.resultDate && now <= item.purchaseDate) {
+     // 購入期間中かチェック
+     if (item.resultDate && item.status === 'purchase') {
+       if (now >= item.resultDate) {
          return 'purchase';
        }
      }
      
-     // 期限切れかチェック
-     if (item.purchaseDate && now > item.purchaseDate) {
-       return 'ended';
-     }
-     if (item.endDate && now > item.endDate && !item.resultDate) {
-       return 'ended';
-     }
-     
-     // 招待制など継続中のものは特別扱い（応募受付中として扱う）
-     if (item.isOngoing) {
+     // 継続中のものは特別扱い
+     if (item.status === 'active' && (!item.endDate || now <= item.endDate)) {
        return 'active';
      }
      
-     // デフォルトは終了済み
-     return 'ended';
+     return item.status || 'ended';
    }
 
-   // 本日開始かどうかを判定する関数
+   // 本日開始かどうかを判定
    function isStartedToday(item) {
      if (!item.startDate) return false;
      
      const startDate = new Date(item.startDate);
      const today = new Date(TODAY);
      
-     // 年月日が一致するかチェック
      return startDate.getFullYear() === today.getFullYear() &&
             startDate.getMonth() === today.getMonth() &&
             startDate.getDate() === today.getDate();
    }
 
-   const storeData = [
-
-// お宝創庫 - 第3回抽選（現在受付中、6/23まで）
-{
-  section: '🔥 現在受付中 抽選販売',
-  store: 'お宝創庫',
-  storeType: '中古品店 第3回（6/23まで）',
-  link: 'https://www.otakaragurakugo.com/',
-  period: '6/16〜6/23 23:45',
-  startDate: new Date('2025-06-16T10:00:00'),
-  endDate: new Date('2025-06-23T23:45:00'),
-  condition: 'お宝創庫アプリ会員限定。2024年5月1日〜2025年5月14日にTVゲーム売買履歴必須。応募倍率17〜50倍程度と予測',
-  result: '6/27発表予定',
-  resultDate: new Date('2025-06-27T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null,
-  countdownId: 'countdown-otakara'
-},
-
-// Amazon - 招待制継続中
-{
-  section: '🔥 現在受付中 抽選販売',
-  store: 'Amazon',
-  storeType: 'EC大手 招待制',
-  link: 'https://www.amazon.co.jp/dp/B0DX1BC3R8',
-  period: '4/24〜（招待制継続）',
-  startDate: null,
-  endDate: null,
-  isOngoing: true,
-  condition: 'Amazonアカウント。招待リクエスト有効期間3ヶ月。招待キャンセル後は同商品再注文不可',
-  result: '随時招待メール通知（過去実績: 5/8、5/13頃）',
-  resultDate: null,
-  deadline: '招待メール受信後48時間以内',
-  purchaseDate: null
-},
-
-// ノジマ - 新規参入店舗（上位会員向け招待制）
-{
-  section: '🔥 現在受付中 抽選販売',
-  store: 'ノジマ',
-  storeType: '家電量販店 上位会員招待制（新規参入）',
-  link: 'https://www.nojima.co.jp/',
-  period: '招待制継続中',
-  startDate: null,
-  endDate: null,
-  isOngoing: true,
-  condition: 'ノジマモバイル会員（ゴールド以上）限定招待。過去1年間の購入実績50,000円以上。招待メール受信者のみ応募可能',
-  result: '随時招待メール通知',
-  resultDate: null,
-  deadline: '招待メール受信後48時間以内',
-  purchaseDate: null
-},
-
-// マイニンテンドーストア（任天堂公式）- 第4回史上最低当選率、第5回は7月上旬発表
-{
-  section: '📢 次回抽選予定',
-  store: 'マイニンテンドーストア',
-  storeType: '任天堂公式 史上最低7.06%当選率、第5回は7月上旬発表',
-  link: 'https://store-jp.nintendo.com/switch2/',
-  period: '第4回終了（6/17発表、史上最低7.06%）',
-  startDate: null,
-  endDate: null,
-  condition: '第4回日本仕様7.06%（史上最低）、マリオカートセット10.4%、多言語仕様25.8%。第5回の詳細は7月上旬頃発表予定。前回条件：Nintendo Switchソフト50時間以上プレイ＋Nintendo Switch Online累積1年以上加入',
-  result: '第4回: 6/17発表済み（史上最低当選率）',
-  resultDate: null,
-  deadline: '第5回は7月上旬発表',
-  purchaseDate: null
-},
-
-// ソフマップ - 第4回購入期間（結果発表済み）
-{
-  section: '💰 購入期間中',
-  store: 'ソフマップ',
-  storeType: 'PC・家電店 第4回購入期間（6/18結果発表済み）',
-  link: 'https://www.sofmap.com/',
-  period: '6/18〜6/20購入期間（オンライン）、6/21〜27（店舗）',
-  startDate: new Date('2025-06-18T10:00:00'),
-  endDate: new Date('2025-06-27T23:59:00'),
-  condition: '第4回当選者のみ。6/18 10:00に結果発表済み。オンライン購入は6/18〜20、店舗受取は6/21〜27。本人確認書類＋会員証必須',
-  result: '6/18発表済み',
-  resultDate: new Date('2025-06-18T10:00:00'),
-  deadline: 'オンライン6/20、店舗6/27まで',
-  purchaseDate: new Date('2025-06-27T23:59:00')
-},
-
-// 駿河屋 - SNS抽選（結果発表済み）
-{
-  section: '💰 購入期間中',
-  store: '駿河屋',
-  storeType: 'ゲーム専門店 SNS抽選',
-  link: 'https://www.suruga-ya.jp/blog/?q=switch2_chusen250609.html',
-  period: '6/16〜6/22 支払い期間',
-  startDate: new Date('2025-06-16T12:00:00'),
-  endDate: new Date('2025-06-22T23:59:00'),
-  condition: '当選者のみ。駿河屋更新情報【公式】アカウント(@surugaya_kosin)フォロー＋指定投稿のリポスト＋コメント必須。Nintendo Switch 2マリオカートセット対象',
-  result: '6/16発表済み',
-  resultDate: new Date('2025-06-16T12:00:00'),
-  deadline: '6/22まで支払い期間',
-  purchaseDate: new Date('2025-06-22T23:59:00')
-},
-
-// 楽天ブックス - 第4回（結果発表待ち）
-{
-  section: '⏳ 結果発表待ち',
-  store: '楽天ブックス',
-  storeType: 'EC大手 第4回（6/20結果発表予定）',
-  link: 'https://books.rakuten.co.jp/event/game/switch2/',
-  period: '6/18 10:00〜6/19 11:59（終了済み）',
-  startDate: new Date('2025-06-18T10:00:00'),
-  endDate: new Date('2025-06-19T11:59:00'),
-  condition: '楽天会員＋2024年6月3日〜2025年6月3日期間中に楽天ブックス購入履歴必須（電子書籍・ダウンロード除く）。過去のSwitch 2抽選当選者は永続的に対象外',
-  result: '6/20（金）発表予定（当選者のみ）',
-  resultDate: new Date('2025-06-20T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// ジョーシン（上新電機）- 第4回結果発表待ち
-{
-  section: '⏳ 結果発表待ち',
-  store: 'ジョーシン',
-  storeType: '家電量販店 第4回抽選販売（メール招待制）',
-  link: 'https://www.joshin.co.jp/',
-  period: '6/13 10:00〜6/16 9:59（終了済み）',
-  startDate: new Date('2025-06-13T10:00:00'),
-  endDate: new Date('2025-06-16T09:59:00'),
-  condition: '対象会員への個別メール招待のみ。6/3時点でジョーシンweb会員（ゴールド/プラチナ/VIP）＋6/12 21:59時点でwebショップメルマガ登録＋過去にSwitch 2購入・当選履歴なし',
-  result: '6/26（水）夕方以降',
-  resultDate: new Date('2025-06-26T18:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// エディオン - 第3回結果発表待ち
-{
-  section: '⏳ 結果発表待ち',
-  store: 'エディオン',
-  storeType: '家電量販店 第3回',
-  link: 'https://www.edion.com/',
-  period: '6/12 10:00〜6/15 23:59（終了済み）',
-  startDate: new Date('2025-06-12T10:00:00'),
-  endDate: new Date('2025-06-15T23:59:00'),
-  condition: 'エディオンカード会員、アプリ会員、あんしん保証会員、ID会員のいずれか。過去のエディオン抽選当選者は対象外',
-  result: 'ゲーム取扱店舗: 6/27、エディオンネット: 6/24',
-  resultDate: new Date('2025-06-24T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// TSUTAYA - 第3回結果発表待ち
-{
-  section: '⏳ 結果発表待ち',
-  store: 'TSUTAYA',
-  storeType: 'レンタル・エンタメ店 第3回アプリ抽選（6/18頃発表）',
-  link: 'https://tsutaya.tsite.jp/article/game/3888.html',
-  period: '6/14 開店〜6/15 閉店（終了済み）',
-  startDate: new Date('2025-06-14T10:00:00'),
-  endDate: new Date('2025-06-15T21:00:00'),
-  condition: 'TSUTAYAアプリでのログイン＋モバイルVカード利用登録＋PUSH通知設定オン必須。一人一回限り応募可能',
-  result: '6/18頃発表予定',
-  resultDate: new Date('2025-06-18T18:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// セブンネットショッピング - 第2回結果発表待ち
-{
-  section: '⏳ 結果発表待ち',
-  store: 'セブンネットショッピング',
-  storeType: 'コンビニ系EC 第2回',
-  link: 'https://7net.omni7.jp/general/027003/250530switch2',
-  period: '5/30 15:00〜6/11 15:00（終了）',
-  startDate: new Date('2025-05-30T15:00:00'),
-  endDate: new Date('2025-06-11T15:00:00'),
-  condition: '2024/5/30〜2025/6/11期間中に1,000円以上購入履歴(電子書籍除く)＋2025/6/15までに商品受取完了＋メルマガ受信設定',
-  result: '6/20 19:00までに当選者へメール通知',
-  resultDate: new Date('2025-06-20T19:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// ヤマダデンキ - 第2回結果発表待ち（3回分割抽選）
-{
-  section: '⏳ 結果発表待ち',
-  store: 'ヤマダデンキ',
-  storeType: '家電量販店 第2回3回分割抽選',
-  link: 'https://www.yamada-denkiweb.com/',
-  period: '5/30〜6/1（終了済み）',
-  startDate: new Date('2025-05-30T10:00:00'),
-  endDate: new Date('2025-06-01T23:59:00'),
-  condition: '2025年4月30日までにヤマダデジタル会員アプリ本登録完了＋2024年5月1日〜2025年6月1日期間中の購入実績。1回応募で3回チャンス',
-  result: '第1回: 6/13発表済み、第2回: 6/20、第3回: 6/27',
-  resultDate: new Date('2025-06-20T12:00:00'),
-  deadline: '各回発表後3日間',
-  purchaseDate: new Date('2025-06-30T23:59:00')
-},
-
-// GEO - 第2回結果発表待ち（延長済み）
-{
-  section: '⏳ 結果発表待ち',
-  store: 'GEO',
-  storeType: 'エンタメ店 第2回Web方式（応募期間延長済み）',
-  link: 'https://geo-online.co.jp/news/726',
-  period: '6/12 11:00〜6/17 17:59（延長済み・終了）',
-  startDate: new Date('2025-06-12T11:00:00'),
-  endDate: new Date('2025-06-17T17:59:00'),
-  condition: 'GEOアプリから応募（店舗レンタル会員機能付きPontaカード所有＋Web申込み）。過去非当選者優先システム＋6ヶ月当選履歴追跡システム導入。技術的問題で17日まで延長',
-  result: '1回目: 6/20、2回目: 6/27（メール通知のみ）',
-  resultDate: new Date('2025-06-20T12:00:00'),
-  deadline: '1回目: 6/21〜6/24、2回目: 6/28〜7/1',
-  purchaseDate: new Date('2025-07-01T23:59:00')
-},
-
-// LOHACO by ASKUL - 結果発表待ち
-{
-  section: '⏳ 結果発表待ち',
-  store: 'LOHACO by ASKUL',
-  storeType: 'Yahoo!ショッピング系EC',
-  link: 'https://shopping.yahoo.co.jp/promotion/campaign/switch2/202506_lohaco/',
-  period: '6/10 12:00〜6/17 11:59（終了済み）',
-  startDate: new Date('2025-06-10T12:00:00'),
-  endDate: new Date('2025-06-17T11:59:00'),
-  condition: '2024/6/6〜2025/6/5の期間にYahoo!ショッピングで購入履歴。Nintendo Switch本体を過去3点以上購入者は対象外（転売対策）',
-  result: '6/24 発表',
-  resultDate: new Date('2025-06-24T12:00:00'),
-  deadline: '6/30 23:59まで',
-  purchaseDate: new Date('2025-06-30T23:59:00')
-},
-
-// XPRICE - 結果発表待ち
-{
-  section: '⏳ 結果発表待ち',
-  store: 'XPRICE本店',
-  storeType: '家電EC 第2回',
-  link: 'https://www.xprice.co.jp/b4.php?id=89612',
-  period: '6/10 12:00〜6/16 23:59（終了済み）',
-  startDate: new Date('2025-06-10T12:00:00'),
-  endDate: new Date('2025-06-16T23:59:00'),
-  condition: 'XPRICE会員登録＋2024/6/1〜2025/6/16の期間中に1回以上の注文履歴（購入金額制限なし、キャンセル・返品除く）',
-  result: '6/19 12:00以降',
-  resultDate: new Date('2025-06-19T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// ドン・キホーテ - 第3回結果発表待ち
-{
-  section: '⏳ 結果発表待ち',
-  store: 'ドン・キホーテ',
-  storeType: 'ディスカウント店 第3回',
-  link: 'https://qa.ppih.co.jp/faq/show/8330?site_domain=donki',
-  period: '6/12 10:00〜6/16 23:59（終了済み）',
-  startDate: new Date('2025-06-12T10:00:00'),
-  endDate: new Date('2025-06-16T23:59:00'),
-  condition: 'majicaアプリから応募。日本国内在住のmajicaアプリ会員限定。第2回から新規参入した注目店舗。majicaアプリ内の抽選ページから応募',
-  result: '6/27頃発表予定',
-  resultDate: new Date('2025-06-27T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// MrMaxアプリ - 第1回結果発表待ち
-{
-  section: '⏳ 結果発表待ち',
-  store: 'MrMaxアプリ',
-  storeType: 'ディスカウント店アプリ',
-  link: 'https://mrmax.co.jp/app/',
-  period: '6/14〜6/16 23:59（終了済み）',
-  startDate: new Date('2025-06-14T10:00:00'),
-  endDate: new Date('2025-06-16T23:59:00'),
-  condition: 'MrMaxアプリから応募。MrMax公式アプリ限定応募。Switch 2本体またはマリオカートワールドセット選択可能。アプリ内抽選ページから応募',
-  result: '6/20頃発表予定',
-  resultDate: new Date('2025-06-20T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// ムラウチドットコム - 新規参入店舗
-{
-  section: '⏳ 結果発表待ち',
-  store: 'ムラウチドットコム',
-  storeType: '家電量販店EC（新規参入）',
-  link: 'https://www.murauchi.com/',
-  period: '6/15〜6/18（終了済み）',
-  startDate: new Date('2025-06-15T10:00:00'),
-  endDate: new Date('2025-06-18T23:59:00'),
-  condition: 'ムラウチドットコム会員登録＋2024年1月以降の購入履歴必須。新規参入のオンライン抽選',
-  result: '6/22発表予定',
-  resultDate: new Date('2025-06-22T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// LAOX - 新規参入店舗
-{
-  section: '⏳ 結果発表待ち',
-  store: 'LAOX',
-  storeType: '免税店・家電店（新規参入）',
-  link: 'https://www.laox.co.jp/',
-  period: '6/16〜6/20（終了済み）',
-  startDate: new Date('2025-06-16T10:00:00'),
-  endDate: new Date('2025-06-20T23:59:00'),
-  condition: 'LAOX会員登録必須。主要都市店舗での受け取り限定。外国人観光客への配慮も実施',
-  result: '6/25発表予定',
-  resultDate: new Date('2025-06-25T12:00:00'),
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// 💰 購入期間終了セクション
-
-// ワンダーグー - 第2回購入期間（終了済み）
-{
-  section: '✅ 結果発表済み・購入期間終了',
-  store: 'ワンダーグー',
-  storeType: 'エンタメ店 第2回（終了済み）',
-  link: 'https://www.wonder.co.jp/',
-  period: '応募期間終了済み',
-  startDate: new Date('2025-06-01T10:00:00'),
-  endDate: new Date('2025-06-12T23:59:00'),
-  condition: '抽選当選者のみ。誰でも応募可能だった抽選。本体またはマリオカートワールドセット選択可。店舗受取のみ',
-  result: '6/13発表済み',
-  resultDate: new Date('2025-06-13T12:00:00'),
-  deadline: '6/14〜6/16購入期間（終了済み）',
-  purchaseDate: new Date('2025-06-16T23:59:00')
-},
-
-// 古本市場 - 第2次入荷分購入期間（終了済み）
-{
-  section: '✅ 結果発表済み・購入期間終了',
-  store: '古本市場',
-  storeType: '中古品店 第2次入荷分（終了済み）',
-  link: 'https://www.furuhon.co.jp/',
-  period: '6/5結果発表〜6/15購入期間（終了済み）',
-  startDate: new Date('2025-06-05T12:00:00'),
-  endDate: new Date('2025-06-15T23:59:00'),
-  condition: 'ふるいちポイントアプリから応募。一般会員もしくはVIP会員。過去1年以内の購入・レンタル履歴必須',
-  result: '6/5発表済み（第2次）、6/20（第3次）',
-  resultDate: new Date('2025-06-20T12:00:00'),
-  deadline: '第2次: 6/14〜15（終了済み）、第3次: 6/21〜22',
-  purchaseDate: new Date('2025-06-22T23:59:00')
-},
-
-// 三洋堂書店 - 購入期間（終了済み）
-{
-  section: '✅ 結果発表済み・購入期間終了',
-  store: '三洋堂書店',
-  storeType: '書店・レンタル店（終了済み）',
-  link: 'https://www.sanyodo.co.jp/',
-  period: '6/14〜6/15購入期間（終了済み）',
-  startDate: new Date('2025-06-14T10:00:00'),
-  endDate: new Date('2025-06-15T23:59:00'),
-  condition: '抽選当選者のみ。過去1年以内の購入・レンタル履歴必須。本人確認書類持参で店舗購入のみ',
-  result: '事前抽選済み',
-  resultDate: new Date('2025-06-14T10:00:00'),
-  deadline: '6/15まで購入期間（終了済み）',
-  purchaseDate: new Date('2025-06-15T23:59:00')
-},
-
-// コジマ - 第2回結果発表済み
-{
-  section: '✅ 結果発表済み・購入期間終了',
-  store: 'コジマ',
-  storeType: '家電量販店 第2回',
-  link: 'https://www.kojima.net/ec/Special/lottery/nintendo_switch2_index.html',
-  period: '6/7〜6/10（終了済み）',
-  startDate: new Date('2025-06-07T10:00:00'),
-  endDate: new Date('2025-06-10T23:59:00'),
-  condition: 'コジマ×ビックカメラカード必須。マイ店舗登録＋過去1年間の購入履歴。店舗受取のみ',
-  result: '6/14 17:00発表済み',
-  resultDate: new Date('2025-06-14T17:00:00'),
-  deadline: '6/14〜6/15購入期間（終了済み）',
-  purchaseDate: new Date('2025-06-15T23:59:00')
-},
-
-// ヨドバシカメラ - 第2回結果発表済み（高当選率達成）
-{
-  section: '✅ 結果発表済み・購入期間終了',
-  store: 'ヨドバシカメラ',
-  storeType: '家電量販店 第2回高当選率86.8%達成',
-  link: 'https://limited.yodobashi.com/',
-  period: '6/6〜6/9（終了済み）',
-  startDate: new Date('2025-06-06T11:00:00'),
-  endDate: new Date('2025-06-09T10:59:00'),
-  condition: 'ヨドバシ会員＋2024/5/1〜2025/4/30期間中に累計5万円以上購入履歴。緊急追加配分により各店舗100-200台増加',
-  result: '6/10 10:00発表済み（一部店舗86.8%の高当選率）',
-  resultDate: new Date('2025-06-10T10:00:00'),
-  deadline: '6/13 23:59まで（終了済み）',
-  purchaseDate: new Date('2025-06-13T23:59:00')
-},
-
-// ビックカメラ - 第3回結果発表済み（早期発表）
-{
-  section: '✅ 結果発表済み・購入期間終了',
-  store: 'ビックカメラ',
-  storeType: '家電量販店 第3回（6/2早期発表済み）',
-  link: 'https://www.biccamera.com/',
-  period: '6/10 8:00〜6/12 20:59（終了）',
-  startDate: new Date('2025-06-10T08:00:00'),
-  endDate: new Date('2025-06-12T20:59:00'),
-  condition: '公式アプリ登録＋ポイントカード登録＋2023年4月〜2025年まで期間中に5万円以上購入履歴。過去のビックカメラSwitch 2抽選当選者は対象外',
-  result: '6/2発表済み（予定より早期）',
-  resultDate: new Date('2025-06-02T17:00:00'),
-  deadline: '6/5〜6/8購入期間（終了済み）',
-  purchaseDate: new Date('2025-06-08T23:59:00')
-},
-
-// ハピネットオンライン - 新規参入店舗
-{
-  section: '✅ 結果発表済み・購入期間終了',
-  store: 'ハピネットオンライン',
-  storeType: '玩具・ゲーム専門EC（新規参入）',
-  link: 'https://www.happinet-online.com/',
-  period: '第2回結果発表済み',
-  startDate: new Date('2025-06-01T10:00:00'),
-  endDate: new Date('2025-06-10T23:59:00'),
-  condition: 'ハピネットオンライン会員＋2023年1月〜2025年5月期間中にゲーム商品5,000円以上購入履歴必須',
-  result: '6/13発表済み',
-  resultDate: new Date('2025-06-13T12:00:00'),
-  deadline: '6/14〜6/16購入期間（終了済み）',
-  purchaseDate: new Date('2025-06-16T23:59:00')
-},
-
-// 🏪 特殊形式・地域限定セクション
-
-// イトーヨーカドー - 店舗別実施
-{
-  section: '🏪 特殊形式・地域限定',
-  store: 'イトーヨーカドー',
-  storeType: 'セブン&アイグループ 店舗別実施',
-  link: 'https://www.itoyokado.co.jp/',
-  period: '店舗により異なる',
-  startDate: null,
-  endDate: null,
-  condition: '7iD登録必須＋二要素認証用電話番号設定＋セブン&アイグループでの購入履歴。店舗別に日程・条件が異なる',
-  result: '店舗により異なる',
-  resultDate: null,
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// イオン - 第3回検討中
-{
-  section: '🏪 特殊形式・地域限定',
-  store: 'イオン',
-  storeType: 'スーパー・専門店 第3回検討中',
-  link: 'https://www.aeon.com/',
-  period: '第3回実施検討中',
-  startDate: null,
-  endDate: null,
-  condition: 'イオンスタイルオンライン: 各種イオンマークのクレジットカード払い限定。キッズリパブリック: 各種イオンマークのカード会員',
-  result: '実施時期未定',
-  resultDate: null,
-  deadline: '当選通知後案内',
-  purchaseDate: null
-},
-
-// トイザらス - 第4回検討中
-{
-  section: '🏪 特殊形式・地域限定',
-  store: 'トイザらス',
-  storeType: 'おもちゃ専門店 第4回検討中',
-  link: 'https://www.toysrus.co.jp/',
-  period: '第4回実施検討中',
-  startDate: null,
-  endDate: null,
-  condition: '「トイザらス・ベビーザらス スターカード」提示で3,000円以上購入＋15ポイント以上獲得（オンライン対象外）',
-  result: '実施時期未定',
-  resultDate: null,
-  deadline: '当選通知後案内',
-  purchaseDate: null
-}
-];
-   
-
-   let currentSortMode = 'priority';
-   let currentSortDirection = 'asc';
-   let currentFilter = 'all';
-
    // 検索機能
    const searchInput = document.getElementById('searchInput');
-   const tableBody = document.getElementById('tableBody');
-   const noResults = document.getElementById('noResults');
-
-   searchInput.addEventListener('input', function() {
-     applyFiltersAndSort();
-   });
+   searchInput.addEventListener('input', applyFiltersAndSort);
 
    // フィルター機能
    function filterRows(status) {
      currentFilter = status;
      const buttons = document.querySelectorAll('.filter-btn');
      
-     // ボタンのアクティブ状態を更新
      buttons.forEach(btn => btn.classList.remove('active'));
      event.target.classList.add('active');
      
@@ -1317,153 +882,36 @@
 
    // カラムソート機能
    function sortByColumn(column) {
-     // 現在のソートカラムと同じ場合は方向を切り替え
-     if (currentSortMode === column) {
-       currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-     } else {
-       currentSortMode = column;
-       currentSortDirection = 'asc';
-     }
-     
-     updateSortHeaders();
+     // 簡単なソート実装
      applyFiltersAndSort();
    }
-
-   // ソートヘッダーの更新
-   function updateSortHeaders() {
-     const headers = document.querySelectorAll('th.sortable');
-     headers.forEach(header => {
-       header.classList.remove('sort-asc', 'sort-desc');
-       if (header.dataset.sort === currentSortMode) {
-         header.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
-       }
-     });
-   }
-
-   // グローバルスコープに関数を公開
-   window.filterRows = filterRows;
-   window.sortByColumn = sortByColumn;
 
    // フィルタリングとソートを適用
    function applyFiltersAndSort() {
      const searchTerm = searchInput.value.toLowerCase();
      let filteredData = storeData.filter(item => {
-       // 検索条件をチェック
        const matchesSearch = item.store.toLowerCase().includes(searchTerm);
-       
-       // 動的ステータス計算
-       item.status = calculateStatus(item);
-       
-       // フィルター条件をチェック
-       const matchesFilter = currentFilter === 'all' || item.status === currentFilter;
+       const itemStatus = calculateStatus(item);
+       const matchesFilter = currentFilter === 'all' || itemStatus === currentFilter;
        
        return matchesSearch && matchesFilter;
      });
 
-     // 優先度付きソート処理
-     if (currentSortMode === 'deadline') {
-       filteredData.sort((a, b) => {
-         // ステータス優先度を定義
-         const statusPriority = {
-           'upcoming': 1,    // 開始予定（最優先）
-           'active': 2,      // 応募受付中
-           'waiting': 3,     // 発表待ち
-           'purchase': 4,    // 購入期間中
-           'ended': 5        // 終了済み
-         };
-         
-         const priorityA = statusPriority[a.status] || 7;
-         const priorityB = statusPriority[b.status] || 7;
-         
-         // ステータス優先度が異なる場合は優先度順
-         if (priorityA !== priorityB) {
-           return priorityA - priorityB;
-         }
-         
-         // 同じステータス内での詳細ソート
-         if (a.status === 'active' && b.status === 'active') {
-           // 受付中の場合：締切が近い順（残り時間が少ない順）
-           if (!a.endDate && !b.endDate) return 0;
-           if (!a.endDate) return 1;
-           if (!b.endDate) return -1;
-           return a.endDate.getTime() - b.endDate.getTime();
-         } else if (a.status === 'upcoming' && b.status === 'upcoming') {
-           // 開始予定の場合：開始が近い順
-           if (!a.startDate && !b.startDate) return 0;
-           if (!a.startDate) return 1;
-           if (!b.startDate) return -1;
-           return a.startDate.getTime() - b.startDate.getTime();
-         } else if (a.status === 'waiting' && b.status === 'waiting') {
-           // 発表待ちの場合：結果発表が近い順
-           if (!a.resultDate && !b.resultDate) return 0;
-           if (!a.resultDate) return 1;
-           if (!b.resultDate) return -1;
-           return a.resultDate.getTime() - b.resultDate.getTime();
-         } else if (a.status === 'purchase' && b.status === 'purchase') {
-           // 購入期間中の場合：購入期限が近い順
-           if (!a.purchaseDate && !b.purchaseDate) return 0;
-           if (!a.purchaseDate) return 1;
-           if (!b.purchaseDate) return -1;
-           return a.purchaseDate.getTime() - b.purchaseDate.getTime();
-         } else if (a.status === 'ended' && b.status === 'ended') {
-           // 終了済みの場合：終了が新しい順
-           if (!a.purchaseDate && !b.purchaseDate) {
-             if (!a.endDate && !b.endDate) return 0;
-             if (!a.endDate) return 1;
-             if (!b.endDate) return -1;
-             return b.endDate.getTime() - a.endDate.getTime();
-           }
-           if (!a.purchaseDate) return 1;
-           if (!b.purchaseDate) return -1;
-           return b.purchaseDate.getTime() - a.purchaseDate.getTime();
-         }
-         
-         return 0;
-       });
-     } else if (currentSortMode === 'result') {
-       filteredData.sort((a, b) => {
-         if (!a.resultDate && !b.resultDate) return 0;
-         if (!a.resultDate) return 1;
-         if (!b.resultDate) return -1;
-         
-         const diff = a.resultDate.getTime() - b.resultDate.getTime();
-         return currentSortDirection === 'asc' ? diff : -diff;
-       });
-     } else if (currentSortMode === 'purchase') {
-       filteredData.sort((a, b) => {
-         if (!a.purchaseDate && !b.purchaseDate) return 0;
-         if (!a.purchaseDate) return 1;
-         if (!b.purchaseDate) return -1;
-         
-         const diff = a.purchaseDate.getTime() - b.purchaseDate.getTime();
-         return currentSortDirection === 'asc' ? diff : -diff;
-       });
-     } else {
-       // デフォルトソート（ステータス優先度順）
-       filteredData.sort((a, b) => {
-         const statusPriority = {
-           'upcoming': 1,
-           'active': 2,
-           'waiting': 3,
-           'purchase': 4,
-           'ended': 5
-         };
-         
-         const priorityA = statusPriority[a.status] || 7;
-         const priorityB = statusPriority[b.status] || 7;
-         
-         if (priorityA !== priorityB) {
-           return priorityA - priorityB;
-         }
-         
-         // 同じステータス内では締切が近い順
-         if (a.endDate && b.endDate) {
-           return a.endDate.getTime() - b.endDate.getTime();
-         }
-         
-         return 0;
-       });
-     }
+     // ステータス優先度でソート
+     filteredData.sort((a, b) => {
+       const statusPriority = {
+         'active': 1,
+         'upcoming': 2,
+         'waiting': 3,
+         'purchase': 4,
+         'ended': 5
+       };
+       
+       const priorityA = statusPriority[calculateStatus(a)] || 6;
+       const priorityB = statusPriority[calculateStatus(b)] || 6;
+       
+       return priorityA - priorityB;
+     });
 
      renderTable(filteredData);
      updateStats(filteredData);
@@ -1471,21 +919,21 @@
 
    // テーブルの描画
    function renderTable(data) {
+     const tableBody = document.getElementById('tableBody');
      let html = '';
      let currentSection = '';
 
      data.forEach(item => {
-       // 動的ステータス計算
-       item.status = calculateStatus(item);
+       const itemStatus = calculateStatus(item);
        
-       // セクションヘッダーを動的に生成（ステータスごと）
+       // セクションヘッダー
        let sectionTitle = '';
-       switch(item.status) {
-         case 'upcoming':
-           sectionTitle = '📅 開始予定';
-           break;
+       switch(itemStatus) {
          case 'active':
            sectionTitle = '🔥 応募受付中（緊急度順）';
+           break;
+         case 'upcoming':
+           sectionTitle = '📅 開始予定';
            break;
          case 'waiting':
            sectionTitle = '⏳ 発表待ち';
@@ -1496,8 +944,6 @@
          case 'ended':
            sectionTitle = '✅ 終了済み';
            break;
-         default:
-           sectionTitle = item.section;
        }
        
        if (sectionTitle !== currentSection) {
@@ -1511,9 +957,9 @@
          `;
        }
 
-       // 緊急度クラスの決定
+       // 緊急度クラス
        let urgencyClass = '';
-       if (item.endDate && item.status === 'active') {
+       if (item.endDate && itemStatus === 'active') {
          const now = new Date();
          const timeDiff = item.endDate.getTime() - now.getTime();
          const hoursDiff = timeDiff / (1000 * 60 * 60);
@@ -1522,16 +968,13 @@
            urgencyClass = 'very-urgent';
          } else if (hoursDiff <= 24 && hoursDiff > 0) {
            urgencyClass = 'urgent';
-         } else if (timeDiff <= 0) {
-           urgencyClass = 'today-ending';
          }
        }
 
-       // NEWバッジの表示判定（本日開始の店舗）
        const showNewBadge = isStartedToday(item);
 
        html += `
-         <tr data-status="${item.status}" class="${urgencyClass}" data-store="${item.store}">
+         <tr data-status="${itemStatus}" class="${urgencyClass}">
            <td>
              <div class="store-name">
                ${item.store}
@@ -1539,11 +982,11 @@
              </div>
              <div class="store-type">${item.storeType}</div>
            </td>
-           <td><span class="status status-${item.status}">${getStatusText(item.status)}</span></td>
-           <td><a href="${item.link}" target="_blank" class="link-btn">${getButtonText(item.status)}</a></td>
+           <td><span class="status status-${itemStatus}">${getStatusText(itemStatus)}</span></td>
+           <td><a href="${item.link}" target="_blank" class="link-btn">${getButtonText(itemStatus)}</a></td>
            <td>
              <div class="period">${item.period}</div>
-             ${item.endDate && item.status === 'active' ? `<div class="countdown" id="${item.countdownId || ''}">残り時間を計算中...</div>` : ''}
+             ${item.endDate && itemStatus === 'active' ? `<div class="countdown" id="${item.countdownId || ''}">残り時間を計算中...</div>` : ''}
            </td>
            <td><div class="condition">${item.condition}</div></td>
            <td><div class="result">${item.result}</div></td>
@@ -1553,11 +996,10 @@
      });
 
      tableBody.innerHTML = html;
-
-     // カウントダウンの更新
      updateCountdowns();
 
-     // 検索結果がない場合の表示
+     // 検索結果なしの表示
+     const noResults = document.getElementById('noResults');
      if (data.length === 0) {
        noResults.classList.remove('hidden');
      } else {
@@ -1582,7 +1024,6 @@
      const buttonMap = {
        'active': '応募リンク',
        'upcoming': '確認リンク',
-       'ongoing': '確認リンク',
        'waiting': '確認リンク',
        'purchase': '確認リンク',
        'ended': '確認リンク'
@@ -1601,7 +1042,6 @@
      };
 
      data.forEach(item => {
-       // 動的ステータス計算
        const status = calculateStatus(item);
        if (stats.hasOwnProperty(status)) {
          stats[status]++;
@@ -1632,7 +1072,6 @@
        if (diff <= 0) {
          element.textContent = '受付終了';
          element.style.color = '#6c757d';
-         element.classList.remove('very-urgent');
          return;
        }
 
@@ -1647,7 +1086,6 @@
 
        element.textContent = `残り ${timeString}`;
 
-       // 6時間以内の場合は特別なスタイル
        if (diff <= 6 * 60 * 60 * 1000) {
          element.classList.add('very-urgent');
        }
@@ -1655,9 +1093,8 @@
    }
 
    // 初期化
-   updateSortHeaders();
    applyFiltersAndSort();
-   setInterval(updateCountdowns, 60000); // 1分ごとに更新
+   setInterval(updateCountdowns, 60000);
  </script>
 </body>
 </html>
