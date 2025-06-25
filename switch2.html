@@ -774,7 +774,7 @@
         <div class="header">
             <h1>抽選応募エージェント | Nintendo Switch 2 完全攻略</h1>
             <div class="subtitle">全国の抽選情報を網羅・分析する専門エージェント | 2025年6月25日現在（最新情報反映版）</div>
-            <div class="update-note">【本日発表】ソフマップ(10時〜), イオン(12時〜) | 【明日以降】ファミマ(26日), GEO(27日)など発表多数！ | 【次回予告】ニンテンドーストア(7月上旬), セブンネット(6/26以降)</div>
+            <div class="update-note">【発表済み】ソフマップ, イオンの結果を確認！ | 【明日以降】ファミマ(26日), GEO(27日)など発表多数！ | 【次回予告】ニンテンドーストア(7月上旬), セブンネット(6/26以降)</div>
         </div>
 
         <div class="search-section">
@@ -843,7 +843,7 @@
         const TODAY = new Date('2025-06-25');
 
         function calculateStatus(item) {
-            const now = new Date('2025-06-25T09:30:00');
+            const now = new Date('2025-06-25T20:30:00'); // 現在時刻を反映
 
             if (item.isOngoing && (!item.endDate || now <= item.endDate)) {
                 return 'active';
@@ -866,7 +866,7 @@
                 }
             }
             
-            if (item.startDate && !item.endDate) { // 開始のみで終了未定の場合
+            if (item.startDate && !item.endDate) {
                  if (now < item.startDate) {
                     return 'upcoming';
                 } else {
@@ -874,7 +874,6 @@
                 }
             }
             
-            // 結果発表のみで既に終了している場合
             if(item.resultDate && now < item.resultDate) {
                 return 'waiting';
             }
@@ -934,7 +933,7 @@
             {
                 store: 'マイニンテンドーストア',
                 storeType: '任天堂公式 第5回予告',
-                link: 'https://store-jp.nintendo.com/switch/',
+                link: 'https://store-jp.nintendo.com/switch2',
                 app: false,
                 period: '第5回は7月上旬実施予定',
                 startDate: new Date('2025-07-01T12:00:00'),
@@ -1144,7 +1143,7 @@
             {
                 store: 'ビックカメラ',
                 storeType: '家電量販店',
-                link: 'https://www.biccamera.com/bc/c/sale/special/lottery/switch_order.html',
+                link: 'https://www.biccamera.com/bc/c/sale/special/lottery/switch2_order.html',
                 app: false,
                 period: '直近の抽選は終了',
                 startDate: new Date('2025-06-13T10:00:00'),
@@ -1317,17 +1316,19 @@
                 if (isEndingToday(item) && item.status === 'active') {
                     urgencyClass = 'last-chance';
                 } else if (item.status === 'purchase') {
-                     const now = new Date('2025-06-25T09:30:00');
+                     const now = new Date('2025-06-25T20:30:00');
                      if(item.purchaseDate) {
                          const timeDiff = item.purchaseDate.getTime() - now.getTime();
-                         const hoursDiff = timeDiff / (1000 * 60 * 60);
-                         if (hoursDiff > 0 && hoursDiff <= 24) {
-                             urgencyClass = 'today-ending';
+                         const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
+                         if (daysDiff >= 0 && daysDiff < 1) { // 本日が購入最終日の場合にハイライト
+                            if(item.purchaseDate.getDate() === now.getDate() && item.purchaseDate.getMonth() === now.getMonth() && item.purchaseDate.getFullYear() === now.getFullYear()) {
+                                urgencyClass = 'today-ending';
+                            }
                          }
                      }
                 }
 
-                const showNewBadge = item.startDate && (new Date('2025-06-25T09:30:00') - new Date(item.startDate)) < 3 * 24 * 60 * 60 * 1000;
+                const showNewBadge = item.startDate && (new Date('2025-06-25T20:30:00') - new Date(item.startDate)) < 3 * 24 * 60 * 60 * 1000;
                 
                 const appIconSvg = `
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
