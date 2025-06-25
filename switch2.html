@@ -535,6 +535,27 @@
             position: relative;
             overflow: hidden;
         }
+        
+        .app-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 28px;
+            background-color: #f0f2f5;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            font-size: 11px;
+            font-weight: 500;
+            color: #495057;
+            text-decoration: none;
+            gap: 4px;
+        }
+
+        .app-icon svg {
+            width: 14px;
+            height: 14px;
+        }
 
         .link-btn::before {
             content: '';
@@ -752,8 +773,8 @@
     <div class="container">
         <div class="header">
             <h1>抽選応募エージェント | Nintendo Switch 2 完全攻略</h1>
-            <div class="subtitle">全国の抽選情報を網羅・分析する専門エージェント | 2025年6月24日現在（最新情報反映版）</div>
-            <div class="update-note">【発表待ち】今週はGEO・ソフマップ・ファミマ・楽天・ヤマダなど発表多数！ | 【次回予告】ニンテンドーストア(7月上旬)・セブンネット(6/26以降)</div>
+            <div class="subtitle">全国の抽選情報を網羅・分析する専門エージェント | 2025年6月25日現在（最新情報反映版）</div>
+            <div class="update-note">【本日発表】ソフマップ(10時〜), イオン(12時〜) | 【明日以降】ファミマ(26日), GEO(27日)など発表多数！ | 【次回予告】ニンテンドーストア(7月上旬), セブンネット(6/26以降)</div>
         </div>
 
         <div class="search-section">
@@ -781,7 +802,7 @@
                     <tr>
                         <th>店舗名</th>
                         <th>ステータス</th>
-                        <th>応募</th>
+                        <th>応募方法</th>
                         <th class="sortable" onclick="sortByColumn('deadline')" data-sort="deadline">受付期間</th>
                         <th>応募条件</th>
                         <th class="sortable" onclick="sortByColumn('result')" data-sort="result">結果発表</th>
@@ -819,10 +840,10 @@
     </div>
 
     <script>
-        const TODAY = new Date('2025-06-24');
+        const TODAY = new Date('2025-06-25');
 
         function calculateStatus(item) {
-            const now = new Date('2025-06-24T10:00:00');
+            const now = new Date('2025-06-25T09:30:00');
 
             if (item.isOngoing && (!item.endDate || now <= item.endDate)) {
                 return 'active';
@@ -831,7 +852,7 @@
             if (item.resultDate && item.purchaseDate && now >= item.resultDate && now <= item.purchaseDate) {
                 return 'purchase';
             }
-
+            
             if (item.endDate && item.resultDate && now > item.endDate && now < item.resultDate) {
                 return 'waiting';
             }
@@ -844,16 +865,27 @@
                     return 'upcoming';
                 }
             }
+            
+            if (item.startDate && !item.endDate) { // 開始のみで終了未定の場合
+                 if (now < item.startDate) {
+                    return 'upcoming';
+                } else {
+                    return 'active';
+                }
+            }
+            
+            // 結果発表のみで既に終了している場合
+            if(item.resultDate && now < item.resultDate) {
+                return 'waiting';
+            }
 
             return 'ended';
         }
 
         function isStartedToday(item) {
             if (!item.startDate) return false;
-
             const startDate = new Date(item.startDate);
             const today = new Date(TODAY);
-
             return startDate.getFullYear() === today.getFullYear() &&
                 startDate.getMonth() === today.getMonth() &&
                 startDate.getDate() === today.getDate();
@@ -861,20 +893,20 @@
 
         function isEndingToday(item) {
             if (!item.endDate) return false;
-
             const endDate = new Date(item.endDate);
             const today = new Date(TODAY);
-
             return endDate.getFullYear() === today.getFullYear() &&
                 endDate.getMonth() === today.getMonth() &&
                 endDate.getDate() === today.getDate();
         }
 
-        const storeData = [{
+        const storeData = [
+            {
                 store: 'Amazon',
                 storeType: 'EC大手 招待制継続中',
                 link: 'https://www.amazon.co.jp/dp/B0DX1BC3R8',
-                period: '4/24〜（招待制）',
+                app: false,
+                period: '常時リクエスト受付中',
                 startDate: new Date('2025-04-24T10:00:00'),
                 endDate: null,
                 isOngoing: true,
@@ -888,7 +920,8 @@
                 store: 'ノジマオンライン',
                 storeType: '家電EC シークレット販売',
                 link: 'https://online.nojima.co.jp/',
-                period: '不定期開催（現在エントリー受付中）',
+                app: false,
+                period: '不定期開催（常時エントリー受付）',
                 startDate: new Date('2025-06-10T10:00:00'),
                 endDate: null,
                 isOngoing: true,
@@ -901,7 +934,8 @@
             {
                 store: 'マイニンテンドーストア',
                 storeType: '任天堂公式 第5回予告',
-                link: 'https://store-jp.nintendo.com/switch2',
+                link: 'https://store-jp.nintendo.com/switch/',
+                app: false,
                 period: '第5回は7月上旬実施予定',
                 startDate: new Date('2025-07-01T12:00:00'),
                 endDate: new Date('2025-07-08T18:00:00'),
@@ -914,7 +948,8 @@
             {
                 store: 'セブンネットショッピング',
                 storeType: 'コンビニ系EC 第3回予告',
-                link: 'https://7net.omni7.jp/general/027003/250530switch2',
+                link: 'https://7net.omni7.jp/top',
+                app: false,
                 period: '6/26以降に実施予定',
                 startDate: new Date('2025-06-26T15:00:00'),
                 endDate: null,
@@ -925,35 +960,38 @@
                 purchaseDate: null
             },
             {
-                store: 'LOHACO by ASKUL',
-                storeType: 'Yahoo!ショッピング系EC',
-                link: 'https://lohaco.yahoo.co.jp/',
-                period: '6/10 12:00 〜 6/17 11:59 (終了)',
-                startDate: new Date('2025-06-10T12:00:00'),
-                endDate: new Date('2025-06-17T11:59:00'),
-                condition: '過去1年間のYahoo!ショッピング購入履歴必須。転売対策条件あり。',
-                result: '6/24 発表',
-                resultDate: new Date('2025-06-24T12:00:00'),
-                deadline: '6/30 23:59まで',
-                purchaseDate: new Date('2025-06-30T23:59:00')
-            },
-            {
-                store: 'ソフマップ',
+                store: 'ソフマップ (Web)',
                 storeType: 'PC・家電店 第5回',
-                link: 'https://www.sofmap.com/product_detail.aspx?sku=10000002',
+                link: 'https://www.sofmap.com/',
+                app: false,
                 period: '6/19 16:00 〜 6/22 10:00 (終了)',
                 startDate: new Date('2025-06-19T16:00:00'),
                 endDate: new Date('2025-06-22T10:00:00'),
                 condition: 'ソフマップ会員＋EC会員登録・メルマガ購読＋過去2年間の購入履歴必須。',
                 result: '6/25 10:00以降 当選者へメール',
                 resultDate: new Date('2025-06-25T10:00:00'),
-                deadline: '店舗:6/28〜7/4, Web:6/25〜6/27',
+                deadline: 'Web:6/25〜6/27, 店舗:6/28〜7/4',
                 purchaseDate: new Date('2025-07-04T23:59:00')
             },
             {
+                store: 'イオン',
+                storeType: '総合スーパー (アプリ抽選)',
+                link: 'https://www.kidsrepublic.jp/about/app.html',
+                app: true,
+                period: '6/14 〜 6/15 (終了)',
+                startDate: new Date('2025-06-14T11:00:00'),
+                endDate: new Date('2025-06-15T19:59:00'),
+                condition: 'キッズリパブリックアプリからの応募。1回の応募で2回抽選。指定店舗での受取必須。',
+                result: '1回目:6/21済, 2回目:6/25 12時〜',
+                resultDate: new Date('2025-06-25T12:00:00'),
+                deadline: '当選通知に記載',
+                purchaseDate: new Date('2025-07-01T23:59:00')
+            },
+            {
                 store: 'ファミリーマート',
-                storeType: 'コンビニ アプリ抽選 第3回',
-                link: 'https://www.family.co.jp/campaign/spot/2506_switch2_lottery.html',
+                storeType: 'コンビニ (ファミペイアプリ)',
+                link: 'https://www.family.co.jp/services/payment/famipay.html',
+                app: true,
                 period: '6/20 10:00 〜 6/22 23:59 (終了)',
                 startDate: new Date('2025-06-20T10:00:00'),
                 endDate: new Date('2025-06-22T23:59:00'),
@@ -965,8 +1003,9 @@
             },
             {
                 store: 'ジョーシン (Web)',
-                storeType: '家電量販店 第4回',
-                link: 'https://joshinweb.jp/game/23952.html',
+                storeType: '家電量販店 (メール招待)',
+                link: 'https://joshinweb.jp/top.html',
+                app: false,
                 period: '6/13 10:00 〜 6/16 9:59 (終了)',
                 startDate: new Date('2025-06-13T10:00:00'),
                 endDate: new Date('2025-06-16T09:59:00'),
@@ -977,9 +1016,24 @@
                 purchaseDate: null
             },
             {
+                store: 'GEO',
+                storeType: 'エンタメ店 (アプリ抽選)',
+                link: 'https://geo-online.co.jp/html/application.html',
+                app: true,
+                period: '6/12 11:00 〜 6/17 17:59 (終了)',
+                startDate: new Date('2025-06-12T11:00:00'),
+                endDate: new Date('2025-06-17T17:59:00'),
+                condition: 'GEOアプリから応募。Pontaカード連携必須。未当選者優先システムあり。',
+                result: '1回目: 6/20済, 2回目: 6/27 予定',
+                resultDate: new Date('2025-06-27T12:00:00'),
+                deadline: '2回目: 6/28〜7/1',
+                purchaseDate: new Date('2025-07-01T23:59:00')
+            },
+            {
                 store: 'お宝創庫',
-                storeType: '中古品店 第3回',
+                storeType: '中古品店 (アプリ抽選)',
                 link: 'https://www.otakarasouko.com/g-lottery/',
+                app: true,
                 period: '6/16 12:00 〜 6/23 23:45 (終了)',
                 startDate: new Date('2025-06-16T12:00:00'),
                 endDate: new Date('2025-06-23T23:45:00'),
@@ -992,7 +1046,8 @@
             {
                 store: '楽天ブックス',
                 storeType: 'EC大手 第4回',
-                link: 'https://books.rakuten.co.jp/event/game/switch2/',
+                link: 'https://books.rakuten.co.jp/event/game/selling/',
+                app: false,
                 period: '6/18 10:00 〜 6/19 23:59 (終了)',
                 startDate: new Date('2025-06-18T10:00:00'),
                 endDate: new Date('2025-06-19T23:59:00'),
@@ -1004,21 +1059,23 @@
             },
             {
                 store: 'ドン・キホーテ',
-                storeType: 'ディスカウント店 第3回',
-                link: 'https://www.donki.com/products/switch2_lottery/',
+                storeType: 'ディスカウント店 (majicaアプリ)',
+                link: 'https://www.majica-net.com/app/',
+                app: true,
                 period: '6/12 10:00 〜 6/19 23:59 (終了)',
                 startDate: new Date('2025-06-12T10:00:00'),
                 endDate: new Date('2025-06-19T23:59:00'),
-                condition: 'majicaアプリから応募。majicaアプリ会員限定。指定店舗での受取必須。',
+                condition: 'majicaアプリから応募。会員限定。指定店舗での受取必須。',
                 result: '6/27 頃 アプリで通知',
                 resultDate: new Date('2025-06-27T12:00:00'),
                 deadline: '当選通知後案内',
                 purchaseDate: null
             },
             {
-                store: 'MrMaxアプリ',
-                storeType: 'ディスカウント店アプリ 第4回',
+                store: 'MrMax',
+                storeType: 'ディスカウント店 (アプリ抽選)',
                 link: 'https://www.mrmax.co.jp/app/',
+                app: true,
                 period: '6/21 12:00 〜 6/23 23:59 (終了)',
                 startDate: new Date('2025-06-21T12:00:00'),
                 endDate: new Date('2025-06-23T23:59:00'),
@@ -1029,27 +1086,15 @@
                 purchaseDate: new Date('2025-06-30T23:59:00')
             },
             {
-                store: 'GEO',
-                storeType: 'エンタメ店 第2回 (2次発表)',
-                link: 'https://geo-online.co.jp/news/726',
-                period: '6/12 11:00 〜 6/17 17:59 (終了)',
-                startDate: new Date('2025-06-12T11:00:00'),
-                endDate: new Date('2025-06-17T17:59:00'),
-                condition: 'GEOアプリ＋専用サイト。Pontaカード連携必須。未当選者優先システムあり。',
-                result: '1回目: 6/20発表済、2回目: 6/27 発表予定',
-                resultDate: new Date('2025-06-27T12:00:00'),
-                deadline: '2回目: 6/28〜7/1',
-                purchaseDate: new Date('2025-07-01T23:59:00')
-            },
-            {
                 store: 'ヤマダデンキ',
-                storeType: '家電量販店 第2回 (3回目発表)',
-                link: 'https://www.yamada-denkiweb.com/site/wevent/20250530_switch2.html',
+                storeType: '家電量販店 (アプリ抽選)',
+                link: 'https://www.yamada-denki.jp/service/application/',
+                app: true,
                 period: '5/30 〜 6/1 (終了)',
                 startDate: new Date('2025-05-30T10:00:00'),
                 endDate: new Date('2025-06-01T23:59:00'),
-                condition: 'ヤマダデジタル会員＋期間中の購入実績。1回の応募で3回抽選チャンス。',
-                result: '第1,2回: 発表済、第3回: 6/27 発表予定',
+                condition: 'ヤマダデジタル会員アプリから応募。期間中の購入実績。1回の応募で3回抽選チャンス。',
+                result: '第1,2回: 発表済、第3回: 6/27 予定',
                 resultDate: new Date('2025-06-27T18:00:00'),
                 deadline: '各回発表後3日間',
                 purchaseDate: new Date('2025-06-30T23:59:00')
@@ -1057,12 +1102,13 @@
             {
                 store: 'エディオン',
                 storeType: '家電量販店 第3回',
-                link: 'https://www.edion.com/topics/detail.html?_prcm_id=27572',
+                link: 'https://www.edion.com/app/release/lottery.html',
+                app: true,
                 period: '6/12 10:00 〜 6/15 23:59 (終了)',
                 startDate: new Date('2025-06-12T10:00:00'),
                 endDate: new Date('2025-06-15T23:59:00'),
-                condition: '各種エディオン会員のいずれか。アプリ会員は即時登録可能。',
-                result: 'ネット: 6/24済, 店舗: 6/27 発表予定',
+                condition: 'エディオンの各種会員(アプリ/ID/カード)いずれかで応募可能。',
+                result: 'ネット: 6/24済, 店舗: 6/27 予定',
                 resultDate: new Date('2025-06-27T12:00:00'),
                 deadline: '当選通知後案内',
                 purchaseDate: null
@@ -1071,6 +1117,7 @@
                 store: 'ジョーシン (アプリ)',
                 storeType: '家電量販店 第5回',
                 link: 'https://joshinweb.jp/app.html',
+                app: true,
                 period: '6/20 0:00 〜 6/22 23:59 (終了)',
                 startDate: new Date('2025-06-20T00:00:00'),
                 endDate: new Date('2025-06-22T23:59:00'),
@@ -1081,69 +1128,60 @@
                 purchaseDate: new Date('2025-07-08T23:59:00')
             },
             {
-                store: 'ビックカメラ (店舗)',
-                storeType: '家電量販店 第3回',
-                link: 'https://www.biccamera.com/bc/c/sale/special/lottery/switch2_order.html',
-                period: '6/21〜6/23 (購入期間終了)',
+                store: 'LOHACO by ASKUL',
+                storeType: 'Yahoo!ショッピング系EC',
+                link: 'https://lohaco.yahoo.co.jp/',
+                app: false,
+                period: '6/10 12:00 〜 6/17 11:59 (終了)',
+                startDate: new Date('2025-06-10T12:00:00'),
+                endDate: new Date('2025-06-17T11:59:00'),
+                condition: '過去1年間のYahoo!ショッピング購入履歴必須。転売対策条件あり。',
+                result: '6/24 12:00以降 発表済み',
+                resultDate: new Date('2025-06-24T12:00:00'),
+                deadline: '6/30 23:59まで',
+                purchaseDate: new Date('2025-06-30T23:59:00')
+            },
+            {
+                store: 'ビックカメラ',
+                storeType: '家電量販店',
+                link: 'https://www.biccamera.com/bc/c/sale/special/lottery/switch_order.html',
+                app: false,
+                period: '直近の抽選は終了',
                 startDate: new Date('2025-06-13T10:00:00'),
                 endDate: new Date('2025-06-15T23:59:00'),
-                condition: '第3回当選者のみ。アプリ会員＋過去の購入履歴(5千円以上)など。',
+                condition: '前回条件: アプリ会員＋過去の購入履歴など。次回開催は公式サイト・アプリで確認。',
                 result: '6/20発表済み',
                 resultDate: new Date('2025-06-20T10:00:00'),
                 deadline: '購入期間終了',
                 purchaseDate: new Date('2025-06-23T21:00:00')
             },
             {
-                store: 'XPRICE本店',
-                storeType: '家電EC 第2回',
-                link: 'https://www.xprice.co.jp/b4.php?id=89612',
-                period: '6/19〜6/23 9:00 (購入期間終了)',
-                startDate: new Date('2025-06-10T12:00:00'),
-                endDate: new Date('2025-06-16T23:59:00'),
-                condition: '第2回当選者のみ。XPRICE会員＋期間中の購入履歴。',
-                result: '6/19 12:00発表済み',
-                resultDate: new Date('2025-06-19T12:00:00'),
-                deadline: '購入期間終了',
-                purchaseDate: new Date('2025-06-23T09:00:00')
-            },
-            {
-                store: 'ビックカメラ (オンライン)',
-                storeType: '家電量販店 第2回',
-                link: 'https://www.biccamera.com/bc/c/sale/special/lottery/switch2_order.html',
-                period: '6/20〜6/22 (購入期間終了)',
-                startDate: new Date('2025-06-10T08:00:00'),
-                endDate: new Date('2025-06-12T20:59:00'),
-                condition: '第2回当選者のみ。オンライン会員＋過去の購入履歴(5万円以上)など。',
-                result: '6/19 17:00発表済み',
-                resultDate: new Date('2025-06-19T17:00:00'),
-                deadline: '購入期間終了',
-                purchaseDate: new Date('2025-06-22T20:59:00')
-            },
-            {
-                store: '駿河屋',
-                storeType: 'ゲーム専門店 SNS抽選',
-                link: 'https://www.suruga-ya.jp/',
-                period: '6/16〜6/22 (支払い期間終了)',
-                startDate: new Date('2025-06-09T12:00:00'),
-                endDate: new Date('2025-06-15T23:59:00'),
-                condition: '当選者のみ。SNSフォロー＆リポスト＋サイト登録必須。',
-                result: '6/16発表済み',
-                resultDate: new Date('2025-06-16T12:00:00'),
-                deadline: '支払い期間終了',
-                purchaseDate: new Date('2025-06-22T23:59:00')
-            },
-            {
                 store: 'ヨドバシカメラ',
-                storeType: '家電量販店 第2回',
-                link: 'https://limited.yodobashi.com/',
-                period: '6/6 7:00 〜 6/9 10:59 (終了)',
+                storeType: '家電量販店',
+                link: 'https://www.yodobashi.com/',
+                app: false,
+                period: '直近の抽選は終了',
                 startDate: new Date('2025-06-06T07:00:00'),
                 endDate: new Date('2025-06-09T10:59:00'),
-                condition: 'ヨドバシ会員。2023年6月以降にヨドバシ・ドット・コム購入履歴 or 店舗購入履歴＋ポイント共通化済み。',
-                result: '6/11 9:00 発表済み',
+                condition: '前回条件: ヨドバシ会員＋過去の購入履歴など。次回開催は公式サイト・アプリで確認。',
+                result: '6/11 発表済み',
                 resultDate: new Date('2025-06-11T09:00:00'),
-                deadline: '6/11〜6/17',
+                deadline: '購入期間終了',
                 purchaseDate: new Date('2025-06-17T23:59:00')
+            },
+            {
+                store: 'TSUTAYA',
+                storeType: 'エンタメ店 (アプリ抽選)',
+                link: 'https://tsutaya.tsite.jp/info/game/20250523/index.html',
+                app: true,
+                period: '直近の抽選は終了',
+                startDate: null,
+                endDate: null,
+                condition: '前回条件: TSUTAYAアプリからの応募。次回開催は公式サイト・アプリで確認。',
+                result: 'ー',
+                resultDate: null,
+                deadline: 'ー',
+                purchaseDate: null
             }
         ];
 
@@ -1155,7 +1193,7 @@
         const tableBody = document.getElementById('tableBody');
         const noResults = document.getElementById('noResults');
 
-        searchInput.addEventListener('input', function () {
+        searchInput.addEventListener('input', function() {
             applyFiltersAndSort();
         });
 
@@ -1164,7 +1202,8 @@
             const buttons = document.querySelectorAll('.filter-btn');
 
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelector(`[onclick="filterRows('${status}')"]`).classList.add('active');
+
 
             applyFiltersAndSort();
         }
@@ -1196,53 +1235,62 @@
 
         function applyFiltersAndSort() {
             const searchTerm = searchInput.value.toLowerCase();
-            let filteredData = storeData.filter(item => {
+            let processedData = storeData.map(item => ({...item, status: calculateStatus(item) }));
+            
+            let filteredData = processedData.filter(item => {
                 const matchesSearch = item.store.toLowerCase().includes(searchTerm);
-
-                item.status = calculateStatus(item);
-
                 const matchesFilter = currentFilter === 'all' || item.status === currentFilter;
-
                 return matchesSearch && matchesFilter;
             });
-
+            
             filteredData.sort((a, b) => {
-                const statusPriority = {
-                    'active': 1,
-                    'purchase': 2,
-                    'upcoming': 3,
-                    'waiting': 4,
-                    'ended': 5
-                };
+                 if (currentSortMode === 'priority') {
+                    const statusPriority = { 'active': 1, 'purchase': 2, 'upcoming': 3, 'waiting': 4, 'ended': 5 };
+                    const priorityA = statusPriority[a.status] || 6;
+                    const priorityB = statusPriority[b.status] || 6;
 
-                const priorityA = statusPriority[a.status] || 6;
-                const priorityB = statusPriority[b.status] || 6;
+                    if (priorityA !== priorityB) return priorityA - priorityB;
 
-                if (priorityA !== priorityB) {
-                    return priorityA - priorityB;
-                }
+                    let dateA, dateB;
+                    if (a.status === 'active' || a.status === 'upcoming') {
+                         dateA = a.endDate || a.startDate;
+                         dateB = b.endDate || b.startDate;
+                    } else { // waiting, purchase, ended
+                        dateA = a.resultDate || a.purchaseDate;
+                        dateB = b.resultDate || b.purchaseDate;
+                    }
 
-                if (a.status === 'active' || a.status === 'upcoming') {
-                    const dateA = a.endDate || a.startDate;
-                    const dateB = b.endDate || b.startDate;
                     if (!dateA && !dateB) return 0;
                     if (!dateA) return 1;
                     if (!dateB) return -1;
+                    
                     return dateA.getTime() - dateB.getTime();
-                } else if (a.status === 'waiting' || a.status === 'purchase') {
-                    const dateA = a.resultDate;
-                    const dateB = b.resultDate;
-                    if (!dateA && !dateB) return 0;
-                    if (!dateA) return 1;
-                    if (!dateB) return -1;
-                    return dateA.getTime() - dateB.getTime();
-                }
+                } else {
+                    let valA, valB;
+                    if (currentSortMode === 'deadline') {
+                        valA = a.endDate || a.startDate;
+                        valB = b.endDate || b.startDate;
+                    } else if (currentSortMode === 'result') {
+                        valA = a.resultDate;
+                        valB = b.resultDate;
+                    } else if (currentSortMode === 'purchase') {
+                        valA = a.purchaseDate;
+                        valB = b.purchaseDate;
+                    }
 
-                return (b.endDate || 0) - (a.endDate || 0);
+                    if (valA === null || valA === undefined) valA = currentSortDirection === 'asc' ? new Date('2999-12-31') : new Date('1970-01-01');
+                    if (valB === null || valB === undefined) valB = currentSortDirection === 'asc' ? new Date('2999-12-31') : new Date('1970-01-01');
+
+                    if (currentSortDirection === 'asc') {
+                        return valA.getTime() - valB.getTime();
+                    } else {
+                        return valB.getTime() - valA.getTime();
+                    }
+                }
             });
 
             renderTable(filteredData);
-            updateStats(storeData);
+            updateStats(processedData);
         }
 
         function renderTable(data) {
@@ -1250,115 +1298,85 @@
             let currentSection = '';
 
             data.forEach(item => {
-                item.status = calculateStatus(item);
-
                 let sectionTitle = '';
                 switch (item.status) {
-                    case 'active':
-                        sectionTitle = '🔥 応募受付中';
-                        break;
-                    case 'purchase':
-                        sectionTitle = '💰 購入期間';
-                        break;
-                    case 'upcoming':
-                        sectionTitle = '📅 開始予定';
-                        break;
-                    case 'waiting':
-                        sectionTitle = '⏳ 結果発表待ち';
-                        break;
-                    case 'ended':
-                        sectionTitle = '✅ 終了済み';
-                        break;
-                    default:
-                        sectionTitle = '📢 その他';
+                    case 'active': sectionTitle = '🔥 応募受付中'; break;
+                    case 'purchase': sectionTitle = '💰 購入期間'; break;
+                    case 'upcoming': sectionTitle = '📅 開始予定'; break;
+                    case 'waiting': sectionTitle = '⏳ 結果発表待ち'; break;
+                    case 'ended': sectionTitle = '✅ 終了済み'; break;
+                    default: sectionTitle = '📢 その他';
                 }
 
                 if (sectionTitle !== currentSection) {
                     currentSection = sectionTitle;
-                    html += `<tr class="section-header">
-      <td colspan="7">
-       <strong>${sectionTitle}</strong>
-      </td>
-      </tr>`;
+                    html += `<tr class="section-header"><td colspan="7"><strong>${sectionTitle}</strong></td></tr>`;
                 }
-
+                
                 let urgencyClass = '';
                 if (isEndingToday(item) && item.status === 'active') {
                     urgencyClass = 'last-chance';
-                } else if (item.purchaseDate && item.status === 'purchase') {
-                    const now = new Date('2025-06-24T10:00:00');
-                    const timeDiff = item.purchaseDate.getTime() - now.getTime();
-                    const hoursDiff = timeDiff / (1000 * 60 * 60);
-                    if (hoursDiff <= 24 && hoursDiff > 0) {
-                        urgencyClass = 'today-ending';
-                    }
+                } else if (item.status === 'purchase') {
+                     const now = new Date('2025-06-25T09:30:00');
+                     if(item.purchaseDate) {
+                         const timeDiff = item.purchaseDate.getTime() - now.getTime();
+                         const hoursDiff = timeDiff / (1000 * 60 * 60);
+                         if (hoursDiff > 0 && hoursDiff <= 24) {
+                             urgencyClass = 'today-ending';
+                         }
+                     }
                 }
 
-                const showNewBadge = item.startDate && (new Date('2025-06-24T10:00:00') - new Date(item
-                    .startDate)) < 3 * 24 * 60 * 60 * 1000;
+                const showNewBadge = item.startDate && (new Date('2025-06-25T09:30:00') - new Date(item.startDate)) < 3 * 24 * 60 * 60 * 1000;
+                
+                const appIconSvg = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
+                      <path d="M11.5 5.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2a.5.5 0 0 1 .5-.5m-3 0a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0v-5a.5.5 0 0 1 .5-.5m-3 0a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0v-5a.5.5 0 0 1 .5-.5"/>
+                    </svg>
+                    <span>アプリ応募</span>`;
+                
+                const linkButton = item.app 
+                    ? `<a href="${item.link}" target="_blank" class="app-icon">${appIconSvg}</a>`
+                    : `<a href="${item.link}" target="_blank" class="link-btn">${getButtonText(item.status)}</a>`;
 
-                html += `<tr data-status="${item.status}" class="${urgencyClass}" data-store="${item.store}">
-      <td>
-       <div class="store-name">
-        ${item.store}
-        ${showNewBadge ? '<span class="new-badge">NEW</span>' : ''}
-       </div>
-       <div class="store-type">${item.storeType}</div>
-      </td>
-      <td><span class="status status-${item.status}">${getStatusText(item.status)}</span></td>
-      <td><a href="${item.link}" target="_blank" class="link-btn">${getButtonText(item.status)}</a></td>
-      <td>
-       <div class="period">${item.period}</div>
-      </td>
-      <td><div class="condition">${item.condition}</div></td>
-      <td><div class="result">${item.result}</div></td>
-      <td><div class="deadline">${item.deadline}</div></td>
-     </tr>`;
+                html += `
+                    <tr data-status="${item.status}" class="${urgencyClass}" data-store="${item.store}">
+                        <td>
+                            <div class="store-name">
+                                ${item.store}
+                                ${showNewBadge ? '<span class="new-badge">NEW</span>' : ''}
+                            </div>
+                            <div class="store-type">${item.storeType}</div>
+                        </td>
+                        <td><span class="status status-${item.status}">${getStatusText(item.status)}</span></td>
+                        <td>${linkButton}</td>
+                        <td><div class="period">${item.period}</div></td>
+                        <td><div class="condition">${item.condition}</div></td>
+                        <td><div class="result">${item.result}</div></td>
+                        <td><div class="deadline">${item.deadline}</div></td>
+                    </tr>`;
             });
 
             tableBody.innerHTML = html;
-
-            if (data.length === 0) {
-                noResults.classList.remove('hidden');
-            } else {
-                noResults.classList.add('hidden');
-            }
+            noResults.classList.toggle('hidden', data.length > 0);
         }
 
         function getStatusText(status) {
-            const statusMap = {
-                'active': '受付中',
-                'upcoming': '開始予定',
-                'waiting': '発表待ち',
-                'purchase': '購入期間',
-                'ended': '終了済み'
-            };
+            const statusMap = { 'active': '受付中', 'upcoming': '開始予定', 'waiting': '発表待ち', 'purchase': '購入期間', 'ended': '終了済み' };
             return statusMap[status] || status;
         }
 
         function getButtonText(status) {
-            const buttonMap = {
-                'active': '応募リンク',
-                'upcoming': '確認リンク',
-                'waiting': '確認リンク',
-                'purchase': '購入リンク',
-                'ended': '確認リンク'
-            };
-            return buttonMap[status] || '確認リンク';
+            const buttonMap = { 'active': '応募リンク', 'upcoming': '確認サイト', 'waiting': '結果確認', 'purchase': '購入サイト', 'ended': '公式サイト' };
+            return buttonMap[status] || '公式サイト';
         }
 
-        function updateStats(data = storeData) {
-            const stats = {
-                active: 0,
-                upcoming: 0,
-                waiting: 0,
-                purchase: 0
-            };
-
+        function updateStats(data) {
+            const stats = { active: 0, upcoming: 0, waiting: 0, purchase: 0 };
             data.forEach(item => {
-                const status = calculateStatus(item);
-                if (stats.hasOwnProperty(status)) {
-                    stats[status]++;
+                if (stats.hasOwnProperty(item.status)) {
+                    stats[item.status]++;
                 }
             });
 
@@ -1370,8 +1388,12 @@
             });
         }
 
-        updateSortHeaders();
-        applyFiltersAndSort();
+        // 初期表示
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSortHeaders();
+            applyFiltersAndSort();
+        });
+
     </script>
 </body>
 
